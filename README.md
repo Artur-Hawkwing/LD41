@@ -1,0 +1,1 @@
+This game is being developed for LD41 (see ldjam.com for information on the event). The theme for development is to combine 2 incompatible genres--I have taken a twist by supersiposing two games in one, where the player must play both at the same time to win.

@@ -42,10 +42,10 @@ public class PauseAppState extends BaseAppState implements ActionListener
     //Text
     private final BitmapText PAUSE_TEXT;
     
-    public PauseAppState(Node guiNode, BitmapFont guiFont)
+    public PauseAppState(BitmapFont guiFont)
     {
-        GUI_NODE = guiNode;
         GUI_FONT = guiFont;
+        GUI_NODE = Main.getMain().getGuiNode();
         INPUT_MANAGER = Main.getMain().getInputManager();
         ASSET_MANAGER = Main.getMain().getAssetManager();
         WIDTH = Main.getDimensions().width;

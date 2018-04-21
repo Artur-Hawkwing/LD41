@@ -87,9 +87,9 @@ public class Main extends SimpleApplication implements ActionListener
         platformerAppState = new PlatformerAppState(cam, viewPort, rootNode, PLAYER);
         rpgAppState = new RPGAppState(cam2, viewPort2, rootNode2, PLAYER);
         bulletAppState = new BulletAppState();
-        menuAppState = new MenuAppState(guiNode, guiFont);
-        hudAppState = new HUDAppState(guiNode, guiFont, PLAYER);
-        pauseAppState = new PauseAppState(guiNode, guiFont);
+        menuAppState = new MenuAppState(guiFont);
+        hudAppState = new HUDAppState(guiFont, PLAYER);
+        pauseAppState = new PauseAppState(guiFont);
         
         stateManager.attach(bulletAppState);
     }
@@ -137,7 +137,10 @@ public class Main extends SimpleApplication implements ActionListener
             {
                 case SWITCH_GAME:
                 {
-                    changeActiveGame();
+                    if(!inMenu)
+                    {
+                        changeActiveGame();
+                    }
                 }
                 break;
                 case PAUSE:
@@ -204,6 +207,11 @@ public class Main extends SimpleApplication implements ActionListener
     public static Main getMain()
     {
         return MAIN;
+    }
+    
+    public BulletAppState getBulletAppState()
+    {
+        return bulletAppState;
     }
     
     public boolean getInMenu()

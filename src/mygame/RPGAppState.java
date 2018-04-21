@@ -7,11 +7,13 @@ package mygame;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
+import com.jme3.asset.AssetManager;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
+import com.jme3.ui.Picture;
 
 /**
  *
@@ -22,8 +24,13 @@ public class RPGAppState extends BaseAppState
     //Base Data
     private final Camera CAMERA;
     private final ViewPort VIEW_PORT;
-    private final Node ROOT_NODE;
     private final Player PLAYER;
+    private final AssetManager ASSET_MANAGER;
+    private final Node ROOT_NODE,
+            GUI_NODE;
+    private final Picture BLACKNESS;
+    private final int WIDTH, 
+        HEIGHT;
     
     //Camera Configuration
     private final int FUSTRUM_FAR = 1000;
@@ -34,6 +41,11 @@ public class RPGAppState extends BaseAppState
         VIEW_PORT = viewPort;
         ROOT_NODE = rootNode;
         PLAYER = player;
+        ASSET_MANAGER = Main.getMain().getAssetManager();
+        GUI_NODE = Main.getMain().getGuiNode();
+        BLACKNESS = new Picture("BLACKNESS");
+        WIDTH = Main.getDimensions().width;
+        HEIGHT = Main.getDimensions().height;
     }
     
     @Override
@@ -41,6 +53,7 @@ public class RPGAppState extends BaseAppState
     {
         initCamera();
         initViewPort();
+        initDimming();
     }
     
     private void initCamera()
@@ -52,6 +65,14 @@ public class RPGAppState extends BaseAppState
     {
         VIEW_PORT.setBackgroundColor(ColorRGBA.Yellow);
     }
+    
+    private void initDimming()
+    {
+        BLACKNESS.setImage(ASSET_MANAGER, "Interface/black.png", true);
+        BLACKNESS.setHeight(HEIGHT);
+        BLACKNESS.setWidth(WIDTH / 2);
+        BLACKNESS.setPosition(WIDTH / 2, 0);
+    }
 
     @Override
     protected void cleanup(Application app) 
@@ -62,12 +83,12 @@ public class RPGAppState extends BaseAppState
     @Override
     protected void onEnable() 
     {
-        
+        GUI_NODE.detachChild(BLACKNESS);
     }
 
     @Override
     protected void onDisable() 
     {
-        
+        GUI_NODE.attachChild(BLACKNESS);
     }
 }

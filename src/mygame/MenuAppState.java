@@ -49,7 +49,7 @@ public class MenuAppState extends BaseAppState implements ActionListener
             + " live through the trials of both, or else fall to Aeoln’s final curse.",
         "You slowly stumble to your feet...twice. After all, you can only move in one world at a time. But if you get hurt in\n"
             + " one, you somehow know that you will feel the blow in both…",
-        "The reams envelop you, a duality though which you now walk.",
+        "The realms envelop you, a duality though which you now walk.",
         "Press Space or Right Arrow to begin..."
     };
     private int currentLoc = 0;
@@ -59,10 +59,10 @@ public class MenuAppState extends BaseAppState implements ActionListener
     private final String NEXT_TEXT = "0",
             LAST_TEXT = "1";
     
-    public MenuAppState(Node guiNode, BitmapFont guiFont)
+    public MenuAppState(BitmapFont guiFont)
     {
-        GUI_NODE = guiNode;
         GUI_FONT = guiFont;
+        GUI_NODE = Main.getMain().getGuiNode();
         ASSET_MANAGER = Main.getMain().getAssetManager();
         INPUT_MANAGER = Main.getMain().getInputManager();
         WIDTH = Main.getDimensions().width;

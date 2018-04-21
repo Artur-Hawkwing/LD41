@@ -32,18 +32,19 @@ public class HUDAppState extends BaseAppState
     private final Player PLAYER;
     
     //Display
-    private final BitmapText HEALTH_TEXT; 
+    private final BitmapText HEALTH_TEXT, HEALTH_TEXT_2; 
     
-    public HUDAppState(Node guiNode, BitmapFont guiFont, Player player)
+    public HUDAppState(BitmapFont guiFont, Player player)
     {
-        GUI_NODE = guiNode;
         GUI_FONT = guiFont;
         PLAYER = player;
+        GUI_NODE = Main.getMain().getGuiNode();
         ASSET_MANAGER = Main.getMain().getAssetManager();
         INPUT_MANAGER = Main.getMain().getInputManager();
         WIDTH = Main.getDimensions().width;
         HEIGHT = Main.getDimensions().height;
         HEALTH_TEXT = new BitmapText(GUI_FONT, false);
+        HEALTH_TEXT_2 = new BitmapText(GUI_FONT, false);
     }
     
     private void updateHealth(int health)
@@ -52,8 +53,15 @@ public class HUDAppState extends BaseAppState
         HEALTH_TEXT.setSize(GUI_FONT.getCharSet().getRenderedSize());
         HEALTH_TEXT.setColor(ColorRGBA.Red);
         HEALTH_TEXT.setSize(20);
-        HEALTH_TEXT.setLocalTranslation((WIDTH - (.039f * WIDTH)) / 2, HEIGHT, 0);
+        HEALTH_TEXT.setLocalTranslation((WIDTH - (.039f * WIDTH)) / 4, HEIGHT, 0);
         GUI_NODE.attachChild(HEALTH_TEXT);
+        
+        HEALTH_TEXT_2.setText("Health: " + health);
+        HEALTH_TEXT_2.setSize(GUI_FONT.getCharSet().getRenderedSize());
+        HEALTH_TEXT_2.setColor(ColorRGBA.Red);
+        HEALTH_TEXT_2.setSize(20);
+        HEALTH_TEXT_2.setLocalTranslation((3 * (WIDTH - (.039f * WIDTH))) / 4, HEIGHT, 0);
+        GUI_NODE.attachChild(HEALTH_TEXT_2);
     }
     
     @Override

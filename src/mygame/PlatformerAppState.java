@@ -8,6 +8,7 @@ package mygame;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
+import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
@@ -31,21 +32,27 @@ public class PlatformerAppState extends BaseAppState
     private final Picture BLACKNESS;
     private final int WIDTH, 
         HEIGHT;
+    private final Vector3f OFFSET;
+    
+    //Light
+    DirectionalLight DIRECTIONAL_LIGHT;
     
     //Camera Configuration
     private final int FUSTRUM_FAR = 1000;
     
-    public PlatformerAppState(Camera camera, ViewPort viewPort, Node rootNode, Player player)
+    public PlatformerAppState(Camera camera, ViewPort viewPort, Vector3f offset, Player player)
     {
         CAMERA = camera;
         VIEW_PORT = viewPort;
-        ROOT_NODE = rootNode;
+        OFFSET = offset;
         PLAYER = player;
+        ROOT_NODE = Main.getMain().getRootNode();
         ASSET_MANAGER = Main.getMain().getAssetManager();
         GUI_NODE = Main.getMain().getGuiNode();
         BLACKNESS = new Picture("BLACKNESS");
         WIDTH = Main.getDimensions().width;
         HEIGHT = Main.getDimensions().height;
+        DIRECTIONAL_LIGHT = new DirectionalLight();
     }
     
     @Override
@@ -53,19 +60,28 @@ public class PlatformerAppState extends BaseAppState
     {
         initCamera();
         initViewPort();
+        initLight();
         initDimming();
         buildLevel();
     }
     
     private void initCamera()
     {
-        CAMERA.setLocation(new Vector3f(0, -20, 0));
+        CAMERA.setLocation(new Vector3f(0, 0, -10).add(OFFSET));
         CAMERA.setFrustumFar(FUSTRUM_FAR);
     }
     
     private void initViewPort()
     {
-        VIEW_PORT.setBackgroundColor(ColorRGBA.Blue);
+        VIEW_PORT.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
+    }
+    
+    private void initLight() 
+    {
+        DIRECTIONAL_LIGHT.setDirection(new Vector3f(-1, -1, 0));
+        DIRECTIONAL_LIGHT.setColor(ColorRGBA.White);
+        
+        ROOT_NODE.addLight(DIRECTIONAL_LIGHT);
     }
     
     private void initDimming()
@@ -78,9 +94,9 @@ public class PlatformerAppState extends BaseAppState
     
     private void buildLevel()
     {
-        for(int x = 0; x < 50; x++)
+        for(int x = -50; x < 50; x++)
         {
-            Block b = new Block(ROOT_NODE, new Vector3f(x, 0, 0));
+            Tree b = new Tree(ROOT_NODE, new Vector3f(0, x, 0).add(OFFSET));
         }
     }
 
@@ -100,5 +116,11 @@ public class PlatformerAppState extends BaseAppState
     protected void onDisable() 
     {
         GUI_NODE.attachChild(BLACKNESS);
+    }
+    
+    @Override
+    public void update(float tpf)
+    {
+        System.out.println(CAMERA.getLocation());
     }
 }

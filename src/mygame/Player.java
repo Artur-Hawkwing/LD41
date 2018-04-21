@@ -5,11 +5,13 @@
  */
 package mygame;
 
+import com.jme3.input.controls.ActionListener;
+
 /**
  *
  * @author jeffr
  */
-public class Player
+public class Player implements ActionListener
 {
     //Characters in both worlds
     private final Platformer PLATFORMER;
@@ -18,6 +20,12 @@ public class Player
     //Data common to all forms of the character
     private final int MAX_HEALTH = 100;
     private int health = MAX_HEALTH;
+    
+    //Input
+    public static final String W = "W",
+            A = "A",
+            S = "S",
+            D = "D";
     
     public Player()
     {
@@ -51,5 +59,18 @@ public class Player
     public Platformer getPlatformer()
     {
         return PLATFORMER;
+    }
+
+    @Override
+    public void onAction(String name, boolean isPressed, float tpf) 
+    {
+        if(Main.getMain().getInPlatformer())
+        {
+            PLATFORMER.onAction(name, isPressed, tpf);
+        }
+        else
+        {
+            PLATFORMER.onAction(name, isPressed, tpf);
+        }
     }
 }

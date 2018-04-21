@@ -36,8 +36,7 @@ public class PauseAppState extends BaseAppState implements ActionListener
     private final Picture DIM;
     
     //Input
-    public final String CONTINUE = "CONTINUE",
-            QUIT = "QUIT";
+    public final String QUIT = "QUIT";
     
     //Text
     private final BitmapText PAUSE_TEXT;
@@ -103,7 +102,8 @@ public class PauseAppState extends BaseAppState implements ActionListener
     protected void onDisable() 
     {
         INPUT_MANAGER.removeListener(this);
-        GUI_NODE.detachAllChildren();
+        GUI_NODE.detachChild(DIM);
+        GUI_NODE.detachChild(PAUSE_TEXT);
     }
 
     @Override

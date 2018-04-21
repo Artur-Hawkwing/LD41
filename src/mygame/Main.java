@@ -2,9 +2,11 @@ package mygame;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.input.FlyByCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
@@ -22,7 +24,7 @@ public class Main extends SimpleApplication implements ActionListener
     //Second view
     private Camera cam2;
     private ViewPort viewPort2;
-    private Node rootNode2;
+    private final Vector3f PLATFORMER_OFFSET = new Vector3f(100_000, 0, 0);
     
     //App States
     private PlatformerAppState platformerAppState;
@@ -63,6 +65,7 @@ public class Main extends SimpleApplication implements ActionListener
     @Override
     public void simpleInitApp() 
     {
+ 
         initViewPorts();
         initAppStates();
         initInput();
@@ -73,6 +76,7 @@ public class Main extends SimpleApplication implements ActionListener
     {
         //View 1
         cam.setViewPort(0f, .5f, 0f, 1f);
+        flyCam.setMoveSpeed(100);
         
         //View 2
         cam2 = cam.clone();
@@ -84,8 +88,8 @@ public class Main extends SimpleApplication implements ActionListener
 
     private void initAppStates()
     {
-        platformerAppState = new PlatformerAppState(cam, viewPort, rootNode, PLAYER);
-        rpgAppState = new RPGAppState(cam2, viewPort2, rootNode2, PLAYER);
+        platformerAppState = new PlatformerAppState(cam, viewPort, PLATFORMER_OFFSET, PLAYER);
+        rpgAppState = new RPGAppState(cam2, viewPort2, PLAYER);
         bulletAppState = new BulletAppState();
         menuAppState = new MenuAppState(guiFont);
         hudAppState = new HUDAppState(guiFont, PLAYER);
@@ -125,7 +129,7 @@ public class Main extends SimpleApplication implements ActionListener
     @Override
     public void simpleUpdate(float tpf) 
     {
-
+        
     }
 
     @Override
@@ -217,5 +221,10 @@ public class Main extends SimpleApplication implements ActionListener
     public boolean getInMenu()
     {
         return inMenu;
+    }
+    
+        public boolean getInPlatformer()
+    {
+        return inPlatformer;
     }
 }

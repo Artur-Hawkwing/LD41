@@ -35,12 +35,12 @@ public class RPGAppState extends BaseAppState
     //Camera Configuration
     private final int FUSTRUM_FAR = 1000;
     
-    public RPGAppState(Camera camera, ViewPort viewPort, Node rootNode, Player player)
+    public RPGAppState(Camera camera, ViewPort viewPort, Player player)
     {
         CAMERA = camera;
         VIEW_PORT = viewPort;
-        ROOT_NODE = rootNode;
         PLAYER = player;
+        ROOT_NODE = Main.getMain().getRootNode();
         ASSET_MANAGER = Main.getMain().getAssetManager();
         GUI_NODE = Main.getMain().getGuiNode();
         BLACKNESS = new Picture("BLACKNESS");
@@ -63,7 +63,7 @@ public class RPGAppState extends BaseAppState
     
     private void initViewPort()
     {
-        VIEW_PORT.setBackgroundColor(ColorRGBA.Yellow);
+        VIEW_PORT.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
     }
     
     private void initDimming()

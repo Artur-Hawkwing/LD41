@@ -5,45 +5,42 @@
  */
 package mygame;
 
-import com.jme3.input.controls.ActionListener;
-
 /**
  *
  * @author jeffr
  */
-public class Platformer implements ActionListener
+public class Platformer
 {
     //Base Data
     private final Player PLAYER;
-    
-    //Input
-    public final String LEFT = "LEFT",
-        RIGHT = "RIGHT",
-        JUMP = "JUMP";
         
     public Platformer(Player player)
     {
         PLAYER = player;
     }
 
-    @Override
     public void onAction(String name, boolean isPressed, float tpf) 
     {
         if(isPressed)
         {
             switch(name)
             {
-                case LEFT:
+                case Player.W:
                 {
                     
                 }
                 break;
-                case RIGHT:
+                case Player.A:
                 {
                     
                 }
                 break;
-                case JUMP:
+                case Player.S:
+                {
+                    
+                }
+                break;
+                case Player.D:
                 {
                     
                 }

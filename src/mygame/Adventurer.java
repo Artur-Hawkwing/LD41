@@ -5,57 +5,47 @@
  */
 package mygame;
 
-import com.jme3.input.controls.ActionListener;
-
 /**
  *
  * @author jeffr
  */
-public class Adventurer implements ActionListener
+public class Adventurer
 {
     //Base Data
     private final Player PLAYER;
-    
-    //Input
-    public final String FORWARDS = "FORWARDS",
-            BACKWARDS = "BACKWARDS",
-            LEFT = "LEFT",
-            RIGHT = "RIGHT";
             
-    
     public Adventurer(Player player)
     {
         PLAYER = player;
     }
 
-    @Override
     public void onAction(String name, boolean isPressed, float tpf) 
     {
         if(isPressed)
         {
             switch(name)
             {
-                case FORWARDS:
+                case Player.W:
                 {
                     
                 }
                 break;
-                case BACKWARDS:
+                case Player.A:
                 {
                     
                 }
                 break;
-                case LEFT:
+                case Player.S:
                 {
                     
                 }
                 break;
-                case RIGHT:
+                case Player.D:
                 {
                     
                 }
                 break;
-            }
+            }        
         }
     }
     

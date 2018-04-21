@@ -68,7 +68,7 @@ public class RPGAppState extends BaseAppState
     
     private void initDimming()
     {
-        BLACKNESS.setImage(ASSET_MANAGER, "Interface/black.png", true);
+        BLACKNESS.setImage(ASSET_MANAGER, "Interface/dim.png", true);
         BLACKNESS.setHeight(HEIGHT);
         BLACKNESS.setWidth(WIDTH / 2);
         BLACKNESS.setPosition(WIDTH / 2, 0);

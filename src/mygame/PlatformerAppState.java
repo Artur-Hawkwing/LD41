@@ -62,7 +62,6 @@ public class PlatformerAppState extends BaseAppState
     @Override
     protected void initialize(Application main) 
     {
-        System.out.println(true);
         initCamera();
         initViewPort();
         initLight();
@@ -91,7 +90,7 @@ public class PlatformerAppState extends BaseAppState
     
     private void initDimming()
     {
-        BLACKNESS.setImage(ASSET_MANAGER, "Interface/black.png", true);
+        BLACKNESS.setImage(ASSET_MANAGER, "Interface/dim.png", true);
         BLACKNESS.setHeight(HEIGHT);
         BLACKNESS.setWidth(WIDTH / 2);
         BLACKNESS.setPosition(0, 0);
@@ -104,11 +103,14 @@ public class PlatformerAppState extends BaseAppState
     
     private void buildLevel()
     {
-        final int BLOCK_LENGTH = 40;
-        Block b = new Block(ROOT_NODE, new Vector3f(0, 0, 0).add(OFFSET));
-        
+        final int LENGTH = 10;
+        //for(int x = 0; x < 20; x++)
+        {
+            Block b = new Block(ROOT_NODE, new Vector3f(0 * LENGTH, 0, 0).add(OFFSET), LENGTH);
+        }
+
         //Place Platformer
-        PLATFORMER.setPhysicsLocation(new Vector3f(0, 5, 0).add(OFFSET));
+        PLATFORMER.setSpawn(new Vector3f(0, 5, 0).add(OFFSET));
     }
 
     @Override

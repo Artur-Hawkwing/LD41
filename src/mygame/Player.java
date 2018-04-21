@@ -83,13 +83,16 @@ public class Player implements ActionListener
     @Override
     public void onAction(String name, boolean isPressed, float tpf) 
     {
-        if(Main.getMain().getInPlatformer())
+        if(Main.getMain().getRunning())
         {
-            PLATFORMER.onAction(name, isPressed, tpf);
-        }
-        else
-        {
-            PLATFORMER.onAction(name, isPressed, tpf);
+            if(Main.getMain().getInPlatformer())
+            {
+                PLATFORMER.onAction(name, isPressed, tpf);
+            }
+            else
+            {
+                PLATFORMER.onAction(name, isPressed, tpf);
+            }
         }
     }
 }

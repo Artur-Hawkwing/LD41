@@ -78,7 +78,7 @@ public class Main extends SimpleApplication implements ActionListener
     {
         //View 1
         cam.setViewPort(0f, .5f, 0f, 1f);
-        flyCam.setMoveSpeed(100);
+        flyCam.setEnabled(false);
         
         //View 2
         cam2 = cam.clone();
@@ -240,6 +240,11 @@ public class Main extends SimpleApplication implements ActionListener
     public boolean getInMenu()
     {
         return inMenu;
+    }
+    
+    public boolean getRunning()
+    {
+        return running;
     }
     
     public boolean getInPlatformer()

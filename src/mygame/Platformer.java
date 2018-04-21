@@ -28,7 +28,7 @@ public class Platformer
     private final Listener LISTENER;
     private Spatial model;
     private Camera camera;
-    private final String MODEL_PATH = "Models/sphere/sphere.j3o",
+    private final String MODEL_PATH = "Models/spherev1/spherev1.j3o",
             NAME = "Platformer";
     
     //Physics Data
@@ -37,6 +37,7 @@ public class Platformer
             HEIGHT = 10,
             MASS = 5;
     private final Vector3f JUMP_FORCE = new Vector3f(0, 50, 0);
+    private Vector3f spawn;
     
     //Motion
     private boolean forward,
@@ -66,9 +67,19 @@ public class Platformer
     
     public void update(float tpf)
     {
+        Vector3f location = getLocation();
+        
+        System.out.println(location);
+        
+        if(location.y < -5)
+        {
+            setPhysicsLocation(spawn);
+            BETTER_CHARACTER_CONTROL.setWalkDirection(Vector3f.ZERO);
+        }
+        
         if(camera != null)
         {
-            Vector3f location = getLocation();
+            
             camera.setLocation(new Vector3f(location.x, 10, -100));
             camera.lookAt(location.add(new Vector3f(0, 35,  0)), Main.getUpVector());
             LISTENER.setLocation(camera.getLocation());
@@ -89,7 +100,7 @@ public class Platformer
             {
                 walkDirection.addLocal(camLeft.negate());
             }
-            walkDirection.mult(SPEED);
+            walkDirection.mult(SPEED * tpf);
             
             BETTER_CHARACTER_CONTROL.setWalkDirection(walkDirection);
         }
@@ -132,7 +143,12 @@ public class Platformer
         return PLAYER.getHealth();
     }
     
-    public void setPhysicsLocation(Vector3f location)
+    public void setSpawn(Vector3f location)
+    {
+        spawn = location;
+    }
+    
+    private void setPhysicsLocation(Vector3f location)
     {
         BETTER_CHARACTER_CONTROL.warp(location);
     }

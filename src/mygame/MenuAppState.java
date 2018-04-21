@@ -53,7 +53,8 @@ public class MenuAppState extends BaseAppState implements ActionListener
         "Press Space or Right Arrow to begin..."
     };
     private int currentLoc = 0;
-    BitmapText currentText;
+    private BitmapText currentText;
+    private Picture background;
     
     //Input
     private final String NEXT_TEXT = "0",
@@ -79,7 +80,7 @@ public class MenuAppState extends BaseAppState implements ActionListener
     
     private void initBackgroundImage()
     {
-        Picture background = new Picture("HUD Picture");
+        background = new Picture("HUD Picture");
         background.setImage(ASSET_MANAGER, "Interface/b.png", true);
         background.setWidth(WIDTH);
         background.setHeight(HEIGHT);
@@ -107,9 +108,6 @@ public class MenuAppState extends BaseAppState implements ActionListener
         INPUT_MANAGER.addMapping(NEXT_TEXT, new KeyTrigger(KeyInput.KEY_SPACE));
         INPUT_MANAGER.addMapping(NEXT_TEXT, new KeyTrigger(KeyInput.KEY_RIGHT));
         INPUT_MANAGER.addMapping(LAST_TEXT, new KeyTrigger(KeyInput.KEY_LEFT));
-        
-        INPUT_MANAGER.addListener(this, NEXT_TEXT);
-        INPUT_MANAGER.addListener(this, LAST_TEXT);
     }
 
     @Override
@@ -121,7 +119,8 @@ public class MenuAppState extends BaseAppState implements ActionListener
     @Override
     protected void onEnable() 
     {
-        
+        INPUT_MANAGER.addListener(this, NEXT_TEXT);
+        INPUT_MANAGER.addListener(this, LAST_TEXT);
     }
 
     @Override
@@ -129,7 +128,8 @@ public class MenuAppState extends BaseAppState implements ActionListener
     {
         if(!Main.getMain().getInMenu())
         {
-            GUI_NODE.detachAllChildren();
+            GUI_NODE.detachChild(currentText);
+            GUI_NODE.detachChild(background);
         }
         INPUT_MANAGER.removeListener(this);
     }

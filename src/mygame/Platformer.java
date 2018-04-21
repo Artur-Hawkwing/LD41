@@ -32,13 +32,16 @@ public class Platformer
             NAME = "Platformer";
     
     //Physics Data
-    protected final BetterCharacterControl BETTER_CHARACTER_CONTROL;
-    protected final float RADIUS = 1,
-            HEIGHT = 1,
-            MASS = 1;
+    private final BetterCharacterControl BETTER_CHARACTER_CONTROL;
+    private final float RADIUS = 1,
+            HEIGHT = 10,
+            MASS = 5;
+    private final Vector3f JUMP_FORCE = new Vector3f(0, 50, 0);
     
     //Motion
-    private boolean forward, backward;
+    private boolean forward,
+            backward;
+    private final int SPEED = 50;
         
     public Platformer(Player player)
     {
@@ -57,10 +60,8 @@ public class Platformer
         model.setName(NAME);
         ROOT_NODE.attachChild(model);
         model.addControl(BETTER_CHARACTER_CONTROL);
+        BETTER_CHARACTER_CONTROL.setJumpForce(JUMP_FORCE);
         BULLET_APP_STATE.getPhysicsSpace().add(BETTER_CHARACTER_CONTROL);
-        
-        //setGravity(Main.getGravity());
-        //setJumpForce(new Vector3f(0, Main.getGravity().y + 5, 0));
     }
     
     public void update(float tpf)
@@ -68,8 +69,8 @@ public class Platformer
         if(camera != null)
         {
             Vector3f location = getLocation();
-            camera.setLocation(new Vector3f(location.x, location.y, -20));
-            System.out.println(camera.getLocation());
+            camera.setLocation(new Vector3f(location.x, 10, -100));
+            camera.lookAt(location.add(new Vector3f(0, 35,  0)), Main.getUpVector());
             LISTENER.setLocation(camera.getLocation());
             LISTENER.setRotation(camera.getRotation());
 
@@ -82,12 +83,13 @@ public class Platformer
 
             if(forward)
             {
-                walkDirection.addLocal(camDir);
+                walkDirection.addLocal(camLeft);
             }
             if(backward)
             {
-                walkDirection.addLocal(camDir.negate());
+                walkDirection.addLocal(camLeft.negate());
             }
+            walkDirection.mult(SPEED);
             
             BETTER_CHARACTER_CONTROL.setWalkDirection(walkDirection);
         }
@@ -104,7 +106,7 @@ public class Platformer
             break;
             case Player.A:
             {
-                backward = isPressed;
+                forward = isPressed;
             }
             break;
             case Player.S:
@@ -114,7 +116,7 @@ public class Platformer
             break;
             case Player.D:
             {
-                forward = isPressed;
+                backward = isPressed;
             }
             break;
         }
@@ -132,7 +134,7 @@ public class Platformer
     
     public void setPhysicsLocation(Vector3f location)
     {
-        model.setLocalTranslation(location);
+        BETTER_CHARACTER_CONTROL.warp(location);
     }
     
     public Vector3f getLocation()

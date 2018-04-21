@@ -5,7 +5,6 @@
  */
 package mygame;
 
-import static com.jme3.app.SimpleApplication.INPUT_MAPPING_EXIT;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -43,9 +42,9 @@ public class Player implements ActionListener
     private void initInput()
     {
         INPUT_MANAGER.addMapping(W, new KeyTrigger(KeyInput.KEY_W));
-        INPUT_MANAGER.addMapping(W, new KeyTrigger(KeyInput.KEY_A));
-        INPUT_MANAGER.addMapping(W, new KeyTrigger(KeyInput.KEY_S));
-        INPUT_MANAGER.addMapping(W, new KeyTrigger(KeyInput.KEY_D));
+        INPUT_MANAGER.addMapping(A, new KeyTrigger(KeyInput.KEY_A));
+        INPUT_MANAGER.addMapping(S, new KeyTrigger(KeyInput.KEY_S));
+        INPUT_MANAGER.addMapping(D, new KeyTrigger(KeyInput.KEY_D));
         
         INPUT_MANAGER.addListener(this, W);
         INPUT_MANAGER.addListener(this, A);

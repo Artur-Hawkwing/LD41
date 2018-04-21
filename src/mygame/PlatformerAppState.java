@@ -62,6 +62,7 @@ public class PlatformerAppState extends BaseAppState
     @Override
     protected void initialize(Application main) 
     {
+        System.out.println(true);
         initCamera();
         initViewPort();
         initLight();
@@ -72,7 +73,6 @@ public class PlatformerAppState extends BaseAppState
     
     private void initCamera()
     {
-        CAMERA.setLocation(new Vector3f(0, 0, -10).add(OFFSET));
         CAMERA.setFrustumFar(FUSTRUM_FAR);
     }
     
@@ -106,8 +106,9 @@ public class PlatformerAppState extends BaseAppState
     {
         final int BLOCK_LENGTH = 40;
         Block b = new Block(ROOT_NODE, new Vector3f(0, 0, 0).add(OFFSET));
-        Block c = new Block(ROOT_NODE, new Vector3f(40, 0, 0).add(OFFSET));
-        PLATFORMER.setPhysicsLocation(new Vector3f(40, 80, 0).add(OFFSET));
+        
+        //Place Platformer
+        PLATFORMER.setPhysicsLocation(new Vector3f(0, 5, 0).add(OFFSET));
     }
 
     @Override
@@ -131,6 +132,6 @@ public class PlatformerAppState extends BaseAppState
     @Override
     public void update(float tpf)
     {
-        
+        PLATFORMER.update(tpf);
     }
 }

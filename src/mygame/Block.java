@@ -7,7 +7,6 @@ package mygame;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
@@ -39,9 +38,10 @@ public class Block
     
     private void loadModel()
     {
-        blockNode = (Node) ASSET_MANAGER.loadModel("Models/cubev2/cubev2.j3o");
-        blockNode.setLocalScale(5);
-        CollisionShape blockShape = CollisionShapeFactory.createBoxShape(ROOT_NODE);
+        blockNode = (Node) ASSET_MANAGER.loadModel("Models/cubev4/cubev4.j3o");
+        CollisionShape blockShape = CollisionShapeFactory.createBoxShape(blockNode);
+        blockNode.setLocalScale(5, 1, 5);
+        
         RigidBodyControl blockBody = new RigidBodyControl(blockShape, 0);
         blockNode.addControl(blockBody);
         ROOT_NODE.attachChild(blockNode);

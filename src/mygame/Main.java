@@ -2,14 +2,12 @@ package mygame;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.input.FlyByCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.Node;
 import com.jme3.system.AppSettings;
 import java.awt.Dimension;
 import java.awt.Toolkit;
@@ -45,7 +43,8 @@ public class Main extends SimpleApplication implements ActionListener
     private Player player;
     
     //Physics
-    private static final Vector3f GRAVITY = new Vector3f(0, -30, 0);
+    private static final Vector3f GRAVITY = new Vector3f(0, -30, 0),
+            UP_VECTOR = new Vector3f(0, 1, 0);
     
     public static void main(String[] args) 
     {
@@ -100,10 +99,21 @@ public class Main extends SimpleApplication implements ActionListener
     {
         platformerAppState = new PlatformerAppState(cam, viewPort, PLATFORMER_OFFSET, player);
         rpgAppState = new RPGAppState(cam2, viewPort2, player);
-        
         menuAppState = new MenuAppState(guiFont);
         hudAppState = new HUDAppState(guiFont, player);
         pauseAppState = new PauseAppState(guiFont);
+        
+        stateManager.attach(rpgAppState);
+        stateManager.attach(platformerAppState);
+        stateManager.attach(hudAppState);
+        stateManager.attach(menuAppState);
+        stateManager.attach(pauseAppState);
+        
+        rpgAppState.setEnabled(false);
+        platformerAppState.setEnabled(false);
+        hudAppState.setEnabled(false);
+        menuAppState.setEnabled(false);
+        pauseAppState.setEnabled(false);
     }
     
     private void initInput()
@@ -116,22 +126,23 @@ public class Main extends SimpleApplication implements ActionListener
         inputManager.addListener(this, PAUSE);
     }
     
+    private void loadMenu()
+    {
+        menuAppState.setEnabled(true);
+    }
+    
     public void loadGame()
     {
+        inMenu = false;
+        
         //Remove Menu
-        stateManager.detach(menuAppState);
+        menuAppState.setEnabled(false);
         
         //Load HUD
-        stateManager.attach(hudAppState);
+        hudAppState.setEnabled(true);
         
         //Start one of the games
         changeActiveGame();
-        inMenu = false;
-    }
-    
-    private void loadMenu()
-    {
-        stateManager.attach(menuAppState);
     }
     
     @Override
@@ -168,14 +179,14 @@ public class Main extends SimpleApplication implements ActionListener
     {
         if(inPlatformer)
         {
-            stateManager.detach(platformerAppState);
-            stateManager.attach(rpgAppState);
+            platformerAppState.setEnabled(false);
+            rpgAppState.setEnabled(true);
             inPlatformer = false;
         }
         else
         {
-            stateManager.detach(rpgAppState);
-            stateManager.attach(platformerAppState);
+            rpgAppState.setEnabled(false);
+            platformerAppState.setEnabled(true);
             inPlatformer = true;
         }
     }
@@ -183,29 +194,29 @@ public class Main extends SimpleApplication implements ActionListener
     private void pause()
     {
         if(running)
-        {
-            stateManager.detach(rpgAppState);
-            stateManager.detach(platformerAppState);
-            stateManager.detach(bulletAppState);
-            stateManager.detach(menuAppState);
-            stateManager.attach(pauseAppState);
+        {    
+            rpgAppState.setEnabled(false);
+            platformerAppState.setEnabled(false);
+            bulletAppState.setEnabled(false);
+            menuAppState.setEnabled(false);
+            pauseAppState.setEnabled(true);
         }
         else
-        {
-            stateManager.detach(pauseAppState);
-            stateManager.attach(bulletAppState);
+        {  
+            pauseAppState.setEnabled(false);
+            bulletAppState.setEnabled(true);
 
             if(inMenu)
             {
-                stateManager.attach(menuAppState);
+                menuAppState.setEnabled(true);
             }
             else if(inPlatformer)
             {
-                stateManager.attach(platformerAppState);
+                platformerAppState.setEnabled(true);
             }
             else
             {
-                stateManager.attach(rpgAppState);
+                rpgAppState.setEnabled(true);
             }
         }
         running = !running;
@@ -240,4 +251,10 @@ public class Main extends SimpleApplication implements ActionListener
     {
         return GRAVITY;
     }
+        
+    public static Vector3f getUpVector()
+    {
+        return UP_VECTOR;
+    }
+    
 }

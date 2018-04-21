@@ -72,8 +72,6 @@ public class PauseAppState extends BaseAppState implements ActionListener
     private void initInput()
     {
         INPUT_MANAGER.addMapping(QUIT, new KeyTrigger(KeyInput.KEY_Q));
-        
-        INPUT_MANAGER.addListener(this, QUIT);
     }
     
     private void initPauseText()
@@ -96,6 +94,7 @@ public class PauseAppState extends BaseAppState implements ActionListener
     {
         GUI_NODE.attachChild(DIM);
         GUI_NODE.attachChild(PAUSE_TEXT);
+        INPUT_MANAGER.addListener(this, QUIT);
     }
 
     @Override

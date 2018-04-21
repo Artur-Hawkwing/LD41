@@ -54,14 +54,12 @@ public class HUDAppState extends BaseAppState
         HEALTH_TEXT.setColor(ColorRGBA.Red);
         HEALTH_TEXT.setSize(20);
         HEALTH_TEXT.setLocalTranslation((WIDTH - (.039f * WIDTH)) / 4, HEIGHT, 0);
-        GUI_NODE.attachChild(HEALTH_TEXT);
         
         HEALTH_TEXT_2.setText("Health: " + health);
         HEALTH_TEXT_2.setSize(GUI_FONT.getCharSet().getRenderedSize());
         HEALTH_TEXT_2.setColor(ColorRGBA.Red);
         HEALTH_TEXT_2.setSize(20);
         HEALTH_TEXT_2.setLocalTranslation((3 * (WIDTH - (.039f * WIDTH))) / 4, HEIGHT, 0);
-        GUI_NODE.attachChild(HEALTH_TEXT_2);
     }
     
     @Override
@@ -79,13 +77,15 @@ public class HUDAppState extends BaseAppState
     @Override
     protected void onEnable() 
     {
-        
+        GUI_NODE.attachChild(HEALTH_TEXT);
+        GUI_NODE.attachChild(HEALTH_TEXT_2);
     }
 
     @Override
     protected void onDisable() 
     {
-        
+        GUI_NODE.detachChild(HEALTH_TEXT);
+        GUI_NODE.detachChild(HEALTH_TEXT_2);
     }
     
     @Override

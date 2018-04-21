@@ -29,6 +29,10 @@ public class Block
     private final float LENGTH,
             WIDTH = 5;
     
+    //Physics data
+    CollisionShape blockShape;
+    RigidBodyControl blockBody;
+    
     public Block(Node rootNode, Vector3f location, float length)
     {
         ROOT_NODE = rootNode;
@@ -44,12 +48,16 @@ public class Block
     {
         blockNode = (Node) ASSET_MANAGER.loadModel("Models/cubev4/cubev4.j3o");
         blockNode.setLocalScale(LENGTH, 1, WIDTH);
-        CollisionShape blockShape = CollisionShapeFactory.createMeshShape(blockNode);
-        
-        RigidBodyControl blockBody = new RigidBodyControl(blockShape, 0);
+        blockShape = CollisionShapeFactory.createMeshShape(blockNode);
+        blockBody = new RigidBodyControl(blockShape, 0);
         blockNode.addControl(blockBody);
         ROOT_NODE.attachChild(blockNode);
         blockBody.setPhysicsLocation(LOCATION);
         BULLET_APP_STATE.getPhysicsSpace().add(blockBody);
+    }
+    
+    public Vector3f getLocation()
+    {
+        return blockBody.getPhysicsLocation();
     }
 }

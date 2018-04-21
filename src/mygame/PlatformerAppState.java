@@ -8,6 +8,7 @@ package mygame;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
+import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
@@ -15,6 +16,11 @@ import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
 import com.jme3.ui.Picture;
+import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -36,6 +42,7 @@ public class PlatformerAppState extends BaseAppState
     
     //Light
     private final DirectionalLight DIRECTIONAL_LIGHT;
+    private final AmbientLight AMBIENT_LIGHT;
     
     //Camera Configuration
     private final int FUSTRUM_FAR = 1000;
@@ -56,6 +63,7 @@ public class PlatformerAppState extends BaseAppState
         WIDTH = Main.getDimensions().width;
         HEIGHT = Main.getDimensions().height;
         DIRECTIONAL_LIGHT = new DirectionalLight();
+        AMBIENT_LIGHT = new AmbientLight();
         PLATFORMER = PLAYER.getPlatformer();
     }
     
@@ -85,7 +93,10 @@ public class PlatformerAppState extends BaseAppState
         DIRECTIONAL_LIGHT.setDirection(new Vector3f(-1, -1, 0));
         DIRECTIONAL_LIGHT.setColor(ColorRGBA.White);
         
+        AMBIENT_LIGHT.setColor(ColorRGBA.White);
+        
         ROOT_NODE.addLight(DIRECTIONAL_LIGHT);
+        ROOT_NODE.addLight(AMBIENT_LIGHT);
     }
     
     private void initDimming()
@@ -103,14 +114,35 @@ public class PlatformerAppState extends BaseAppState
     
     private void buildLevel()
     {
-        final int LENGTH = 10;
-        //for(int x = 0; x < 20; x++)
+        final int LENGTH = 1;
+        boolean first = true;
+        File file= new File("Assets/Maps/lvl1.png");
+        try
         {
-            Block b = new Block(ROOT_NODE, new Vector3f(0 * LENGTH, 0, 0).add(OFFSET), LENGTH);
+            BufferedImage image = ImageIO.read(file);
+            for(int x = 0; x < image.getWidth(); x++)
+            {
+                for(int y = 0; y < image.getHeight(); y++)
+                {
+                    Color c = new Color(image.getRGB(x, y));
+                    if(c.equals(Color.BLACK))
+                    {
+                        Block b = new Block(ROOT_NODE, new Vector3f((image.getWidth() - x) * LENGTH, y, 0).add(OFFSET), LENGTH);
+                        if(first)
+                        {
+                            PLATFORMER.setSpawn(b.getLocation().add(new Vector3f(0, 5, 0)));
+                            first = false;
+                        }
+                    }
+                }
+            }
         }
-
-        //Place Platformer
-        PLATFORMER.setSpawn(new Vector3f(0, 5, 0).add(OFFSET));
+        catch(IOException ioe)
+        {
+            ioe.printStackTrace();
+        }
+        
+        
     }
 
     @Override

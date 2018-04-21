@@ -32,7 +32,7 @@ public class Platformer
             NAME = "Platformer";
     
     //Physics Data
-    private final BetterCharacterControl BETTER_CHARACTER_CONTROL;
+    private final OpenCharacterControl OPEN_CHARACTER_CONTROL;
     private final float RADIUS = 1,
             HEIGHT = 10,
             MASS = 5;
@@ -42,12 +42,12 @@ public class Platformer
     //Motion
     private boolean forward,
             backward;
-    private final int SPEED = 50;
+    private final int SPEED = 1500;
         
     public Platformer(Player player)
     {
         PLAYER = player;
-        BETTER_CHARACTER_CONTROL = new BetterCharacterControl(RADIUS, HEIGHT, MASS);
+        OPEN_CHARACTER_CONTROL = new OpenCharacterControl(RADIUS, HEIGHT, MASS);
         ASSET_MANAGER = Main.getMain().getAssetManager();
         ROOT_NODE = Main.getMain().getRootNode();
         BULLET_APP_STATE = Main.getMain().getBulletAppState();
@@ -60,21 +60,19 @@ public class Platformer
         model = ASSET_MANAGER.loadModel(MODEL_PATH);
         model.setName(NAME);
         ROOT_NODE.attachChild(model);
-        model.addControl(BETTER_CHARACTER_CONTROL);
-        BETTER_CHARACTER_CONTROL.setJumpForce(JUMP_FORCE);
-        BULLET_APP_STATE.getPhysicsSpace().add(BETTER_CHARACTER_CONTROL);
+        model.addControl(OPEN_CHARACTER_CONTROL);
+        OPEN_CHARACTER_CONTROL.setJumpForce(JUMP_FORCE);
+        BULLET_APP_STATE.getPhysicsSpace().add(OPEN_CHARACTER_CONTROL);
     }
     
     public void update(float tpf)
     {
         Vector3f location = getLocation();
         
-        System.out.println(location);
-        
         if(location.y < -5)
         {
             setPhysicsLocation(spawn);
-            BETTER_CHARACTER_CONTROL.setWalkDirection(Vector3f.ZERO);
+            OPEN_CHARACTER_CONTROL.setWalkDirection(Vector3f.ZERO);
         }
         
         if(camera != null)
@@ -87,22 +85,23 @@ public class Platformer
 
             Vector3f camDir = new Vector3f(),
                     camLeft = new Vector3f(),
-                    walkDirection = Vector3f.ZERO;
+                    walkDirection = new Vector3f(0, 0, 0);
 
             camDir.set(camera.getDirection()).multLocal(.6f);
             camLeft.set(camera.getLeft()).multLocal(.4f);
 
             if(forward)
             {
-                walkDirection.addLocal(camLeft);
+                walkDirection.addLocal(camLeft.negate());
+                walkDirection.normalizeLocal().multLocal(SPEED * tpf);
             }
             if(backward)
             {
-                walkDirection.addLocal(camLeft.negate());
+                walkDirection.addLocal(camLeft);
+                walkDirection.normalizeLocal().multLocal(SPEED * tpf);
             }
-            walkDirection.mult(SPEED * tpf);
-            
-            BETTER_CHARACTER_CONTROL.setWalkDirection(walkDirection);
+
+            OPEN_CHARACTER_CONTROL.setWalkDirection(walkDirection);
         }
     }
 
@@ -112,12 +111,12 @@ public class Platformer
         {
             case Player.W:
             {
-                BETTER_CHARACTER_CONTROL.jump();
+                OPEN_CHARACTER_CONTROL.jump();
             }
             break;
             case Player.A:
             {
-                forward = isPressed;
+                backward = isPressed;
             }
             break;
             case Player.S:
@@ -127,7 +126,7 @@ public class Platformer
             break;
             case Player.D:
             {
-                backward = isPressed;
+                forward = isPressed;
             }
             break;
         }
@@ -150,7 +149,7 @@ public class Platformer
     
     private void setPhysicsLocation(Vector3f location)
     {
-        BETTER_CHARACTER_CONTROL.warp(location);
+        OPEN_CHARACTER_CONTROL.warp(location);
     }
     
     public Vector3f getLocation()

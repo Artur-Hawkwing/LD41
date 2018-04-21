@@ -54,7 +54,8 @@ public class MenuAppState extends BaseAppState implements ActionListener
     };
     private int currentLoc = 0;
     private BitmapText currentText;
-    private Picture background;
+    private Picture mainScreen,
+            background;
     
     //Input
     private final String NEXT_TEXT = "0",
@@ -78,9 +79,19 @@ public class MenuAppState extends BaseAppState implements ActionListener
         initInput();
     }
     
+    private void initMainScreen()
+    {
+        /*mainScreen = new Picture("Main Picture");
+        mainScreen.setImage(ASSET_MANAGER, "Interface/b.png", true);
+        mainScreen.setWidth(WIDTH);
+        mainScreen.setHeight(HEIGHT);
+        mainScreen.setPosition(0, 0);
+        GUI_NODE.attachChild(mainScreen);*/
+    }
+    
     private void initBackgroundImage()
     {
-        background = new Picture("HUD Picture");
+        background = new Picture("Background Picture");
         background.setImage(ASSET_MANAGER, "Interface/b.png", true);
         background.setWidth(WIDTH);
         background.setHeight(HEIGHT);

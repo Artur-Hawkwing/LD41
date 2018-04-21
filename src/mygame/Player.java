@@ -5,7 +5,11 @@
  */
 package mygame;
 
+import static com.jme3.app.SimpleApplication.INPUT_MAPPING_EXIT;
+import com.jme3.input.InputManager;
+import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 
 /**
  *
@@ -22,6 +26,7 @@ public class Player implements ActionListener
     private int health = MAX_HEALTH;
     
     //Input
+    private final InputManager INPUT_MANAGER;
     public static final String W = "W",
             A = "A",
             S = "S",
@@ -31,6 +36,21 @@ public class Player implements ActionListener
     {
         PLATFORMER = new Platformer(this);
         ADVENTURER = new Adventurer(this);
+        INPUT_MANAGER = Main.getMain().getInputManager();
+        initInput();
+    }
+    
+    private void initInput()
+    {
+        INPUT_MANAGER.addMapping(W, new KeyTrigger(KeyInput.KEY_W));
+        INPUT_MANAGER.addMapping(W, new KeyTrigger(KeyInput.KEY_A));
+        INPUT_MANAGER.addMapping(W, new KeyTrigger(KeyInput.KEY_S));
+        INPUT_MANAGER.addMapping(W, new KeyTrigger(KeyInput.KEY_D));
+        
+        INPUT_MANAGER.addListener(this, W);
+        INPUT_MANAGER.addListener(this, A);
+        INPUT_MANAGER.addListener(this, S);
+        INPUT_MANAGER.addListener(this, D);
     }
     
     public void modHealth(int value)

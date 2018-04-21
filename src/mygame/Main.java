@@ -42,7 +42,10 @@ public class Main extends SimpleApplication implements ActionListener
             PAUSE = "PAUSE";
     
     //Player Data
-    private final Player PLAYER = new Player();
+    private Player player;
+    
+    //Physics
+    private static final Vector3f GRAVITY = new Vector3f(0, -30, 0);
     
     public static void main(String[] args) 
     {
@@ -65,8 +68,8 @@ public class Main extends SimpleApplication implements ActionListener
     @Override
     public void simpleInitApp() 
     {
- 
         initViewPorts();
+        initPlayer();
         initAppStates();
         initInput();
         loadMenu();
@@ -86,16 +89,21 @@ public class Main extends SimpleApplication implements ActionListener
         cam2.setViewPort(.5f, 1f, 0f, 1f);
     }
 
+    private void initPlayer()
+    {
+        bulletAppState = new BulletAppState();
+        stateManager.attach(bulletAppState);
+        player = new Player();
+    }
+    
     private void initAppStates()
     {
-        platformerAppState = new PlatformerAppState(cam, viewPort, PLATFORMER_OFFSET, PLAYER);
-        rpgAppState = new RPGAppState(cam2, viewPort2, PLAYER);
-        bulletAppState = new BulletAppState();
-        menuAppState = new MenuAppState(guiFont);
-        hudAppState = new HUDAppState(guiFont, PLAYER);
-        pauseAppState = new PauseAppState(guiFont);
+        platformerAppState = new PlatformerAppState(cam, viewPort, PLATFORMER_OFFSET, player);
+        rpgAppState = new RPGAppState(cam2, viewPort2, player);
         
-        stateManager.attach(bulletAppState);
+        menuAppState = new MenuAppState(guiFont);
+        hudAppState = new HUDAppState(guiFont, player);
+        pauseAppState = new PauseAppState(guiFont);
     }
     
     private void initInput()
@@ -223,8 +231,13 @@ public class Main extends SimpleApplication implements ActionListener
         return inMenu;
     }
     
-        public boolean getInPlatformer()
+    public boolean getInPlatformer()
     {
         return inPlatformer;
+    }
+    
+    public static Vector3f getGravity()
+    {
+        return GRAVITY;
     }
 }

@@ -35,10 +35,13 @@ public class PlatformerAppState extends BaseAppState
     private final Vector3f OFFSET;
     
     //Light
-    DirectionalLight DIRECTIONAL_LIGHT;
+    private final DirectionalLight DIRECTIONAL_LIGHT;
     
     //Camera Configuration
     private final int FUSTRUM_FAR = 1000;
+    
+    //Platformer
+    private final Platformer PLATFORMER;
     
     public PlatformerAppState(Camera camera, ViewPort viewPort, Vector3f offset, Player player)
     {
@@ -53,6 +56,7 @@ public class PlatformerAppState extends BaseAppState
         WIDTH = Main.getDimensions().width;
         HEIGHT = Main.getDimensions().height;
         DIRECTIONAL_LIGHT = new DirectionalLight();
+        PLATFORMER = PLAYER.getPlatformer();
     }
     
     @Override
@@ -62,6 +66,7 @@ public class PlatformerAppState extends BaseAppState
         initViewPort();
         initLight();
         initDimming();
+        initPlatformer();
         buildLevel();
     }
     
@@ -92,12 +97,17 @@ public class PlatformerAppState extends BaseAppState
         BLACKNESS.setPosition(0, 0);
     }
     
+    private void initPlatformer()
+    {
+        PLATFORMER.setCamera(CAMERA);
+    }
+    
     private void buildLevel()
     {
-        for(int x = -50; x < 50; x++)
-        {
-            Tree b = new Tree(ROOT_NODE, new Vector3f(0, x, 0).add(OFFSET));
-        }
+        final int BLOCK_LENGTH = 40;
+        Block b = new Block(ROOT_NODE, new Vector3f(0, 0, 0).add(OFFSET));
+        Block c = new Block(ROOT_NODE, new Vector3f(40, 0, 0).add(OFFSET));
+        PLATFORMER.setPhysicsLocation(new Vector3f(40, 80, 0).add(OFFSET));
     }
 
     @Override
@@ -121,6 +131,6 @@ public class PlatformerAppState extends BaseAppState
     @Override
     public void update(float tpf)
     {
-        System.out.println(CAMERA.getLocation());
+        
     }
 }

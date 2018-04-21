@@ -39,8 +39,8 @@ public class Block
     
     private void loadModel()
     {
-        blockNode = (Node) ASSET_MANAGER.loadModel("Models/cube/cube.j3o");
-        blockNode.scale(50);
+        blockNode = (Node) ASSET_MANAGER.loadModel("Models/cubev2/cubev2.j3o");
+        blockNode.setLocalScale(5);
         CollisionShape blockShape = CollisionShapeFactory.createBoxShape(ROOT_NODE);
         RigidBodyControl blockBody = new RigidBodyControl(blockShape, 0);
         blockNode.addControl(blockBody);

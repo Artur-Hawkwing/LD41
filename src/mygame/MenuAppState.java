@@ -36,7 +36,7 @@ public class MenuAppState extends BaseAppState implements ActionListener
     private final String[] INTRODUCTION = 
     {
         "You are lying on the ground in sleep. Slowly, you begin to awake from what seems like an eternity of darkness.",
-        "You enemy! You have finally beaten him! Now you begin to remember...the fight...then something. What put you \n"
+        "Your enemy! You have finally beaten him! Now you begin to remember...the fight...then something. What put you \n"
             + "to sleep anyway?",
         "You promised your subjects you would unite the kingdom and exile Aeoln the Divider. Now he is dead...but why…?",
         "\"You may unite the kingdom, but you shall not find peace again!\" Those were his last words. Why?",

@@ -18,7 +18,7 @@ import com.jme3.scene.Spatial;
  *
  * @author jeffr
  */
-public class Platformer extends BetterCharacterControl
+public class Platformer
 {
     //Base Data
     private final Player PLAYER;
@@ -28,14 +28,22 @@ public class Platformer extends BetterCharacterControl
     private final Listener LISTENER;
     private Spatial model;
     private Camera camera;
+    private final String MODEL_PATH = "Models/sphere/sphere.j3o",
+            NAME = "Platformer";
+    
+    //Physics Data
+    protected final BetterCharacterControl BETTER_CHARACTER_CONTROL;
+    protected final float RADIUS = 1,
+            HEIGHT = 1,
+            MASS = 1;
     
     //Motion
     private boolean forward, backward;
         
     public Platformer(Player player)
     {
-        super(20, 40, 5);
         PLAYER = player;
+        BETTER_CHARACTER_CONTROL = new BetterCharacterControl(RADIUS, HEIGHT, MASS);
         ASSET_MANAGER = Main.getMain().getAssetManager();
         ROOT_NODE = Main.getMain().getRootNode();
         BULLET_APP_STATE = Main.getMain().getBulletAppState();
@@ -45,35 +53,32 @@ public class Platformer extends BetterCharacterControl
     
     private void initPhysics()
     {
-        
-        model = (Node) ASSET_MANAGER.loadModel("Models/sphere/sphere.j3o");
-        model.setName("Player");
-        model.setLocalScale(5);
-        model.addControl(this);
-        model.setCullHint(Spatial.CullHint.Always);
-        model.move(0, 0, 0);
-        BULLET_APP_STATE.getPhysicsSpace().add(this);
+        model = ASSET_MANAGER.loadModel(MODEL_PATH);
+        model.setName(NAME);
         ROOT_NODE.attachChild(model);
-        //  setGravity(Main.getGravity());
-        setJumpForce(new Vector3f(0, Main.getGravity().y + 5, 0));
+        model.addControl(BETTER_CHARACTER_CONTROL);
+        BULLET_APP_STATE.getPhysicsSpace().add(BETTER_CHARACTER_CONTROL);
+        
+        //setGravity(Main.getGravity());
+        //setJumpForce(new Vector3f(0, Main.getGravity().y + 5, 0));
     }
     
-    @Override
     public void update(float tpf)
     {
         if(camera != null)
         {
+            Vector3f location = getLocation();
             camera.setLocation(new Vector3f(location.x, location.y, -20));
             System.out.println(camera.getLocation());
             LISTENER.setLocation(camera.getLocation());
             LISTENER.setRotation(camera.getRotation());
 
             Vector3f camDir = new Vector3f(),
-                    camLeft = new Vector3f();
+                    camLeft = new Vector3f(),
+                    walkDirection = Vector3f.ZERO;
 
             camDir.set(camera.getDirection()).multLocal(.6f);
             camLeft.set(camera.getLeft()).multLocal(.4f);
-            setWalkDirection(new Vector3f(0,0,0));
 
             if(forward)
             {
@@ -83,6 +88,8 @@ public class Platformer extends BetterCharacterControl
             {
                 walkDirection.addLocal(camDir.negate());
             }
+            
+            BETTER_CHARACTER_CONTROL.setWalkDirection(walkDirection);
         }
     }
 
@@ -92,7 +99,7 @@ public class Platformer extends BetterCharacterControl
         {
             case Player.W:
             {
-                jump();
+                BETTER_CHARACTER_CONTROL.jump();
             }
             break;
             case Player.A:
@@ -123,14 +130,14 @@ public class Platformer extends BetterCharacterControl
         return PLAYER.getHealth();
     }
     
-    public void setPhysicsLocation(Vector3f loc)
+    public void setPhysicsLocation(Vector3f location)
     {
-        super.setPhysicsLocation(loc);
+        model.setLocalTranslation(location);
     }
     
-    public Vector3f getPhysicsLocation()
+    public Vector3f getLocation()
     {
-        return location;
+        return ROOT_NODE.getChild(NAME).getLocalTranslation();
     }
     
     public void setCamera(Camera c)

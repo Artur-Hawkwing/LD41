@@ -10,8 +10,13 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import java.util.Random;
 
 /**
@@ -22,7 +27,7 @@ public class Enemy
 {
     //Base Data
     private final AssetManager ASSET_MANAGER;
-    private Node enemyNode;
+    private ParticleEmitter enemyNode;
     private final Node ROOT_NODE;
     private final BulletAppState BULLET_APP_STATE;
     private final Vector3f LOCATION;
@@ -57,8 +62,22 @@ public class Enemy
     
     private void loadModel()
     {
-        enemyNode = (Node) ASSET_MANAGER.loadModel(TYPE.getPath());
-        enemyNode.setName(NAME);
+        enemyNode = new ParticleEmitter(NAME, ParticleMesh.Type.Triangle, 30);
+        Material mat = new Material(ASSET_MANAGER, "Common/MatDefs/Misc/Particle.j3md");
+        mat.setTexture("Texture", ASSET_MANAGER.loadTexture("Effects/Explosion/flame.png"));
+        enemyNode.setMaterial(mat);
+        enemyNode.setImagesX(2); 
+        enemyNode.setImagesY(2); // 2x2 texture animation
+        enemyNode.setEndColor(ColorRGBA.Red); 
+        enemyNode.setStartColor(ColorRGBA.Yellow);
+        enemyNode.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2, 0));
+        enemyNode.setStartSize(2);
+        enemyNode.setEndSize(2);
+        enemyNode.setGravity(0, 0, 0);
+        enemyNode.setLowLife(1f);
+        enemyNode.setHighLife(3f);
+        enemyNode.getParticleInfluencer().setVelocityVariation(0.3f);
+
         ROOT_NODE.attachChild(enemyNode);
         enemyNode.addControl(OPEN_CHARACTER_CONTROL);
         BULLET_APP_STATE.getPhysicsSpace().add(OPEN_CHARACTER_CONTROL);

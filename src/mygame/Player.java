@@ -73,6 +73,11 @@ public class Player implements ActionListener
         {
             health += value;
         }
+        
+        if(health < 0)
+        {
+            Main.getMain().endGame();
+        }
     }
     
     public int getHealth()

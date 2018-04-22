@@ -16,7 +16,7 @@ public enum BlockType
         @Override
         public String getPath()
         {
-            return "Models/cubev4/cubev4.j3o";
+            return "Models/standardBlock/standardBlock.j3o";
         }
     },
     
@@ -25,7 +25,7 @@ public enum BlockType
         @Override
         public String getPath()
         {
-            return "Models/cubev4/cubev4.j3o";
+            return "Models/standardBlock/standardBlock.j3o";
         }
     },
     
@@ -34,7 +34,7 @@ public enum BlockType
         @Override
         public String getPath()
         {
-            return "Models/cubev4/cubev4.j3o";
+            return "Models/standardBlock/standardBlock.j3o";
         }
     },
     
@@ -43,7 +43,7 @@ public enum BlockType
         @Override
         public String getPath()
         {
-            return "Models/cubev4/cubev4.j3o";
+            return "Models/powerBlock/powerBlock.j3o";
         }
     },
     
@@ -52,7 +52,7 @@ public enum BlockType
         @Override
         public String getPath()
         {
-            return "Models/cubev4/cubev4.j3o";
+            return "Models/finishBlockv1/finishBlockv1.j3o";
         }
     };
     

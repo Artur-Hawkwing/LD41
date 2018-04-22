@@ -8,7 +8,6 @@ package mygame;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
-import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
@@ -49,8 +48,8 @@ public class PlatformerAppState extends BaseAppState
     private final Vector3f OFFSET;
     
     //Light
-    private final DirectionalLight DIRECTIONAL_LIGHT;
-    private final AmbientLight AMBIENT_LIGHT;
+    private final DirectionalLight DIRECTIONAL_LIGHT = new DirectionalLight();
+    private final AmbientLight AMBIENT_LIGHT = new AmbientLight();
     
     //Camera Configuration
     private final int FUSTRUM_FAR = 1000;
@@ -66,6 +65,8 @@ public class PlatformerAppState extends BaseAppState
     private Block finishBlock,
             firstBlock;
     
+    //Timing
+    private float timer = 0;
     
     //Random
     private final Random GENERATOR = new Random();
@@ -89,8 +90,6 @@ public class PlatformerAppState extends BaseAppState
         BLACKNESS = new Picture("BLACKNESS");
         WIDTH = Main.getDimensions().width;
         HEIGHT = Main.getDimensions().height;
-        DIRECTIONAL_LIGHT = new DirectionalLight();
-        AMBIENT_LIGHT = new AmbientLight();
         PLATFORMER = PLAYER.getPlatformer();
     }
     
@@ -112,15 +111,15 @@ public class PlatformerAppState extends BaseAppState
     
     private void initViewPort()
     {
-        VIEW_PORT.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
+        VIEW_PORT.setBackgroundColor(new ColorRGBA(.45f, .45f, .45f, 1f));
     }
     
     private void initLight() 
     {
-        DIRECTIONAL_LIGHT.setDirection(new Vector3f(-1, -1, 0));
+        DIRECTIONAL_LIGHT.setDirection(new Vector3f(1, -1, -1));
         DIRECTIONAL_LIGHT.setColor(ColorRGBA.White);
         
-        AMBIENT_LIGHT.setColor(ColorRGBA.White.mult(.5f));
+        AMBIENT_LIGHT.setColor(ColorRGBA.White.mult(.3f));
         
         ROOT_NODE.addLight(DIRECTIONAL_LIGHT);
         ROOT_NODE.addLight(AMBIENT_LIGHT);
@@ -179,7 +178,7 @@ public class PlatformerAppState extends BaseAppState
                     
                     if(blockType != null)
                     {
-                        Block block = new Block(ROOT_NODE, new Vector3f((image.getWidth() - x) * LENGTH, (image.getHeight() - y), 0).add(OFFSET), LENGTH, PREFIX + blockType.name(), blockType);
+                        Block block = new Block(ROOT_NODE, new Vector3f((image.getWidth() - x) * (2 * LENGTH), (image.getHeight() - y), 0).add(OFFSET), LENGTH, PREFIX + blockType.name(), blockType);
                         if(blockType.name().equals(BlockType.LEFT_END.name()))
                         {
                             LEFT_BLOCKS.add(block);
@@ -203,6 +202,7 @@ public class PlatformerAppState extends BaseAppState
                         
                         if(first)
                         {
+                            firstBlock = block;
                             PLATFORMER.setSpawn(block.getLocation().add(new Vector3f(0, 5, 0)));
                             PLATFORMER.respawn();
                             first = false;
@@ -220,12 +220,23 @@ public class PlatformerAppState extends BaseAppState
             ioe.printStackTrace();
         }
     }
+    
+    private void spawnEnemies(int num)
+    {
+        float minX = firstBlock.getLocation().x;
+        float maxX = finishBlock.getLocation().x;
+        float x = minX + (GENERATOR.nextFloat() * (maxX - minX));
+        float y = 5 + GENERATOR.nextFloat() * 20;
+
+        Enemy e = new Enemy(ROOT_NODE, new Vector3f(x, y, 0), EnemyType.SPIKEBALL);
+        ENEMIES.add(e);
+        System.out.println(e.getLocation());
+    }
 
     @Override
     protected void cleanup(Application main) 
     {
         ROOT_NODE.removeLight(DIRECTIONAL_LIGHT);
-        ROOT_NODE.removeLight(AMBIENT_LIGHT);
         for(Block b : POWER_BLOCKS)
         {
             b.destroy();
@@ -279,6 +290,13 @@ public class PlatformerAppState extends BaseAppState
     @Override
     public void update(float tpf)
     {
+        timer += tpf;
+        if((int) timer % 15 == 0 && (int) timer > 0)
+        {
+            spawnEnemies((int) timer / 15);
+            timer++;
+        }
+        
         PLATFORMER.update(tpf);
         
         if(finishBlock != null)

@@ -46,7 +46,7 @@ public class Platformer
     
     //Health
     private float healthTimer = 0,
-            healthTimerGoal = .42f;
+            healthTimerGoal = .35f;
     private boolean canChangeHealth = true;
         
     public Platformer(Player player, String name)

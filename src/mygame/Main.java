@@ -35,6 +35,7 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     private MenuAppState menuAppState;
     private HUDAppState hudAppState;
     private PauseAppState pauseAppState;
+    private EndGameAppState endGameAppState;
     private boolean inPlatformer = false,
             inMenu = true,
             running = true;
@@ -53,6 +54,9 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     //Collision
     private final String PLATFORM_PREFIX = "P",
             RPG_PREFIX = "R";
+    
+    //Timing
+    private float timer = 0;
     
     public static void main(String[] args) 
     {
@@ -110,6 +114,7 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         menuAppState = new MenuAppState(guiFont);
         hudAppState = new HUDAppState(guiFont, player);
         pauseAppState = new PauseAppState(guiFont);
+        endGameAppState = new EndGameAppState(guiFont);
         
         stateManager.attach(rpgAppState);
         stateManager.attach(platformerAppState);
@@ -149,14 +154,15 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         //Load HUD
         hudAppState.setEnabled(true);
         
-        //Start one of the games
+        //Start both of the games, use one
+        changeActiveGame();
         changeActiveGame();
     }
     
     @Override
     public void simpleUpdate(float tpf) 
     {
-        
+        timer += tpf;
     }
 
     @Override
@@ -236,6 +242,29 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         stateManager.detach(platformerAppState);
         stateManager.attach(platformerAppState);
         platformerAppState.setEnabled(false);
+    }
+    
+    public void endGame()
+    {
+        stateManager.detach(rpgAppState);
+        stateManager.detach(platformerAppState);
+        stateManager.detach(bulletAppState);
+        stateManager.detach(menuAppState);
+        stateManager.detach(pauseAppState);
+        stateManager.detach(hudAppState);
+        endGameAppState.setTime(timer);
+        stateManager.attach(endGameAppState);
+    }
+    
+    public void beginNew()
+    {
+        stateManager.detach(endGameAppState);
+        timer = 0;
+        inMenu = true;
+        running = true;
+        inPlatformer = false;
+        rootNode.detachAllChildren();
+        simpleInitApp();
     }
     
     public static Dimension getDimensions()

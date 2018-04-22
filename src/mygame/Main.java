@@ -230,6 +230,14 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         running = !running;
     }
     
+    public void resetPlatformerAppState()
+    {
+        changeActiveGame();
+        stateManager.detach(platformerAppState);
+        stateManager.attach(platformerAppState);
+        platformerAppState.setEnabled(false);
+    }
+    
     public static Dimension getDimensions()
     {
         return SCREEN_SIZE;
@@ -279,12 +287,19 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     {
         return RPG_PREFIX;
     }
+    
+    public PlatformerAppState getPlatformerAppState()
+    {
+        return platformerAppState;
+    }
 
     @Override
     public void collision(PhysicsCollisionEvent event)
     {
         Spatial a = event.getNodeA();
         Spatial b = event.getNodeB();
+        
+        System.out.println(a.getName() + " " + b.getName());
         
         if(a.getName().startsWith(PLATFORM_PREFIX) || b.getName().startsWith(PLATFORM_PREFIX))
         {
@@ -294,7 +309,5 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         {
             rpgAppState.collision(a, b);
         }
-        
     }
-    
 }

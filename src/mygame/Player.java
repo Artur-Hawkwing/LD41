@@ -10,6 +10,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.scene.Spatial;
+import java.util.List;
 
 /**
  *
@@ -54,6 +55,11 @@ public class Player implements ActionListener
         INPUT_MANAGER.addListener(this, A);
         INPUT_MANAGER.addListener(this, S);
         INPUT_MANAGER.addListener(this, D);
+    }
+    
+    public void addPowerUps(List<PowerUp> powerUps)
+    {
+        //ADVENTURER.resolvePowerUps(powerUps);
     }
     
     public void modHealth(int value)

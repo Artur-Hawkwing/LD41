@@ -25,7 +25,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 import javax.imageio.ImageIO;
 
 /**
@@ -56,11 +58,17 @@ public class PlatformerAppState extends BaseAppState
     //Map
     private final Map<Color, BlockType> BLOCK_COLOR_MAPPING = new HashMap<>();
     private final Map<Color, EnemyType> ENEMY_COLOR_MAPPING = new HashMap<>();
-    
-    //Enemies
     private final List<Enemy> ENEMIES = new ArrayList<>();
     private final List<Block> LEFT_BLOCKS = new ArrayList<>(),
-            RIGHT_BLOCKS = new ArrayList<>();
+            RIGHT_BLOCKS = new ArrayList<>(),
+            POWER_BLOCKS = new ArrayList<>(),
+            STANDARD_BLOCKS = new ArrayList<>();
+    private Block finishBlock,
+            firstBlock;
+    
+    
+    //Random
+    private final Random GENERATOR = new Random();
     
     //Platformer
     private final Platformer PLATFORMER;
@@ -142,9 +150,9 @@ public class PlatformerAppState extends BaseAppState
     {
         BLOCK_COLOR_MAPPING.put(Color.BLACK, BlockType.STANDARD);
         BLOCK_COLOR_MAPPING.put(Color.YELLOW, BlockType.LEFT_END);
+        BLOCK_COLOR_MAPPING.put(Color.RED, BlockType.FINISH);
         BLOCK_COLOR_MAPPING.put(Color.BLUE, BlockType.RIGHT_END);
-        BLOCK_COLOR_MAPPING.put(Color.RED, BlockType.DAMAGING);
-        BLOCK_COLOR_MAPPING.put(Color.GREEN, BlockType.FINISH);
+        BLOCK_COLOR_MAPPING.put(Color.GREEN, BlockType.POWER);
     }
     
     private void initEnemyColorMappping()
@@ -156,7 +164,8 @@ public class PlatformerAppState extends BaseAppState
     {
         final int LENGTH = 5;
         boolean first = true;
-        File file= new File("Assets/Maps/lvl2.png");
+        int level = GENERATOR.nextInt(2) + 1;
+        File file= new File("Assets/Maps/lvl" + level + ".png");
         try
         {
             BufferedImage image = ImageIO.read(file);
@@ -170,7 +179,7 @@ public class PlatformerAppState extends BaseAppState
                     
                     if(blockType != null)
                     {
-                        Block block = new Block(ROOT_NODE, new Vector3f((image.getWidth() - x) * LENGTH, (image.getHeight() - y), 0).add(OFFSET), LENGTH, PREFIX + blockType.name());
+                        Block block = new Block(ROOT_NODE, new Vector3f((image.getWidth() - x) * LENGTH, (image.getHeight() - y), 0).add(OFFSET), LENGTH, PREFIX + blockType.name(), blockType);
                         if(blockType.name().equals(BlockType.LEFT_END.name()))
                         {
                             LEFT_BLOCKS.add(block);
@@ -179,10 +188,23 @@ public class PlatformerAppState extends BaseAppState
                         {
                             RIGHT_BLOCKS.add(block);
                         }
+                        else if(blockType.name().equals(BlockType.POWER.name()))
+                        {
+                            POWER_BLOCKS.add(block);
+                        }
+                        else if(blockType.name().equals(BlockType.STANDARD.name()))
+                        {
+                            STANDARD_BLOCKS.add(block);
+                        }
+                        else if(blockType.name().equals(BlockType.FINISH.name()))
+                        {
+                            finishBlock = block;
+                        }
                         
                         if(first)
                         {
                             PLATFORMER.setSpawn(block.getLocation().add(new Vector3f(0, 5, 0)));
+                            PLATFORMER.respawn();
                             first = false;
                         }
                     }
@@ -202,7 +224,25 @@ public class PlatformerAppState extends BaseAppState
     @Override
     protected void cleanup(Application main) 
     {
-
+        ROOT_NODE.removeLight(DIRECTIONAL_LIGHT);
+        ROOT_NODE.removeLight(AMBIENT_LIGHT);
+        for(Block b : POWER_BLOCKS)
+        {
+            b.destroy();
+        }
+        for(Block b : LEFT_BLOCKS)
+        {
+            b.destroy();
+        }
+        for(Block b : RIGHT_BLOCKS)
+        {
+            b.destroy();
+        }
+        for(Block b : STANDARD_BLOCKS)
+        {
+            b.destroy();
+        }
+        finishBlock.destroy(); 
     }
 
     @Override
@@ -215,12 +255,40 @@ public class PlatformerAppState extends BaseAppState
     protected void onDisable() 
     {
         GUI_NODE.attachChild(BLACKNESS);
+        PLATFORMER.stop();
+    }
+    
+    public List<PowerUp> collectPowerUps(Vector3f location)
+    {
+        List<PowerUp> powerUps = new ArrayList<>();
+        ListIterator<Block> it = POWER_BLOCKS.listIterator();
+        while(it.hasNext())
+        {
+            Block b = it.next();
+            if(b.getLocation().distance(location) < 20)
+            {
+                PowerUp[] values = PowerUp.values();
+                powerUps.add(values[GENERATOR.nextInt(values.length)]);
+                b.destroy();
+                it.remove();
+            }
+        }
+        return powerUps;
     }
     
     @Override
     public void update(float tpf)
     {
         PLATFORMER.update(tpf);
+        
+        if(finishBlock != null)
+        {
+            if(PLATFORMER.getLocation().distance(finishBlock.getLocation()) < 5)
+            {
+                Main.getMain().resetPlatformerAppState();
+            }
+        }
+        
         for(Enemy e : ENEMIES)
         {
             e.update(tpf);
@@ -248,15 +316,9 @@ public class PlatformerAppState extends BaseAppState
     }
     
     public void collision(Spatial a, Spatial b)
-    {
-        //If PLATFORMER is involved
-        if(a.getName().equals(PLAYER.getPlatformer().getName()) || b.getName().equals(PLAYER.getPlatformer().getName()))
-        {
-            PLATFORMER.collision(a, b);
-        }
-        
+    {        
         //Reverse enemy motion at end of blocks
-        else if(a.getName().startsWith(Enemy.getPrefix()) && (b.getName().equals(BlockType.LEFT_END.name())))
+        if(a.getName().startsWith(Enemy.getPrefix()) && (b.getName().equals(BlockType.LEFT_END.name())))
         {
             for(Enemy e : ENEMIES)
             {

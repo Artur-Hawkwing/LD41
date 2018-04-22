@@ -12,6 +12,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
+import java.util.Random;
 
 /**
  *
@@ -36,7 +37,8 @@ public class Enemy
     private static int ID = 0;
     
     //Motion
-    private boolean backward = true;
+    private final Random GENERATOR = new Random();
+    private boolean backward;
     
     public Enemy(Node rootNode, Vector3f location, EnemyType type)
     {
@@ -47,6 +49,7 @@ public class Enemy
         BULLET_APP_STATE = Main.getMain().getBulletAppState();
         ASSET_MANAGER = Main.getMain().getAssetManager();
         OPEN_CHARACTER_CONTROL = new OpenCharacterControl(RADIUS, HEIGHT, MASS);
+        backward = GENERATOR.nextBoolean();
         ID++;
         
         loadModel();
@@ -77,8 +80,7 @@ public class Enemy
         {
             OPEN_CHARACTER_CONTROL.warp(new Vector3f(location.x, location.y, 0));
         }
-        
-        System.out.println(walkDirection);
+
         OPEN_CHARACTER_CONTROL.setWalkDirection(walkDirection);
     }
     

@@ -34,7 +34,7 @@ public class Platformer
     //Physics Data
     private final OpenCharacterControl OPEN_CHARACTER_CONTROL;
     private final float RADIUS = 1,
-            HEIGHT = 10,
+            HEIGHT = 2,
             MASS = 5;
     private final Vector3f JUMP_FORCE = new Vector3f(0, 50, 0);
     private Vector3f spawn;
@@ -132,7 +132,7 @@ public class Platformer
             break;
             case Player.S:
             {
-
+                claimPowerUps();
             }
             break;
             case Player.D:
@@ -143,9 +143,9 @@ public class Platformer
         }
     }
     
-    public void collision(Spatial a, Spatial b)
+    public void claimPowerUps()
     {
-        
+        PLAYER.addPowerUps(Main.getMain().getPlatformerAppState().collectPowerUps(getLocation()));
     }
     
     public void modHealth(int value)
@@ -158,6 +158,11 @@ public class Platformer
         }
     }
     
+    public void stop()
+    {
+        OPEN_CHARACTER_CONTROL.setWalkDirection(new Vector3f(0, 0, 0));
+    }
+    
     public int getHealth()
     {
         return PLAYER.getHealth();
@@ -166,6 +171,11 @@ public class Platformer
     public void setSpawn(Vector3f location)
     {
         spawn = location;
+    }
+    
+    public void respawn()
+    {
+        OPEN_CHARACTER_CONTROL.warp(spawn);
     }
     
     private void setPhysicsLocation(Vector3f location)

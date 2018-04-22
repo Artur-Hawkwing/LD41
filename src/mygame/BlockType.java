@@ -11,9 +11,50 @@ package mygame;
  */
 public enum BlockType 
 {
-    STANDARD,
-    LEFT_END,
-    RIGHT_END,
-    DAMAGING,
-    FINISH;
+    STANDARD
+    {
+        @Override
+        public String getPath()
+        {
+            return "Models/cubev4/cubev4.j3o";
+        }
+    },
+    
+    LEFT_END
+    {
+        @Override
+        public String getPath()
+        {
+            return "Models/cubev4/cubev4.j3o";
+        }
+    },
+    
+    RIGHT_END
+    {
+        @Override
+        public String getPath()
+        {
+            return "Models/cubev4/cubev4.j3o";
+        }
+    },
+    
+    POWER
+    {
+        @Override
+        public String getPath()
+        {
+            return "Models/cubev4/cubev4.j3o";
+        }
+    },
+    
+    FINISH
+    {
+        @Override
+        public String getPath()
+        {
+            return "Models/cubev4/cubev4.j3o";
+        }
+    };
+    
+    public abstract String getPath();
 }

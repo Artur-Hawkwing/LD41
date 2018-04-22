@@ -47,15 +47,15 @@ public class HUDAppState extends BaseAppState
         HEALTH_TEXT_2 = new BitmapText(GUI_FONT, false);
     }
     
-    private void updateHealth(int health)
+    private void updateLabels(int health, float time)
     {
-        HEALTH_TEXT.setText("Health: " + health);
+        HEALTH_TEXT.setText("Health: " + health + "\nTime: " + (int) time);
         HEALTH_TEXT.setSize(GUI_FONT.getCharSet().getRenderedSize());
         HEALTH_TEXT.setColor(ColorRGBA.Red);
         HEALTH_TEXT.setSize(20);
         HEALTH_TEXT.setLocalTranslation((WIDTH - (.039f * WIDTH)) / 4, HEIGHT, 0);
         
-        HEALTH_TEXT_2.setText("Health: " + health);
+        HEALTH_TEXT_2.setText("Health: " + health + "\nTime: " + (int) time);
         HEALTH_TEXT_2.setSize(GUI_FONT.getCharSet().getRenderedSize());
         HEALTH_TEXT_2.setColor(ColorRGBA.Red);
         HEALTH_TEXT_2.setSize(20);
@@ -91,6 +91,6 @@ public class HUDAppState extends BaseAppState
     @Override
     public void update(float tpf)
     {
-        updateHealth(PLAYER.getHealth());
+        updateLabels(PLAYER.getHealth(), Main.getMain().getTime());
     }
 }

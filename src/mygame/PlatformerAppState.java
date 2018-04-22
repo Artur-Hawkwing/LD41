@@ -111,7 +111,7 @@ public class PlatformerAppState extends BaseAppState
     
     private void initViewPort()
     {
-        VIEW_PORT.setBackgroundColor(new ColorRGBA(.45f, .45f, .45f, 1f));
+        VIEW_PORT.setBackgroundColor(new ColorRGBA(.65f, .65f, .65f, 1f));
     }
     
     private void initLight() 

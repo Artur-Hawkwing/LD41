@@ -83,7 +83,8 @@ public class Platformer
         
         if(location.y < -5)
         {
-            setPhysicsLocation(spawn);
+            respawn();
+            modHealth(-10);
             OPEN_CHARACTER_CONTROL.setWalkDirection(Vector3f.ZERO);
         }
         

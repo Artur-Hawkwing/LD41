@@ -4,6 +4,7 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
+import com.jme3.input.FlyByCamera;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
@@ -26,6 +27,7 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     //Second view
     private Camera cam2;
     private ViewPort viewPort2;
+    private FlyByCamera flyCam2;
     private final Vector3f PLATFORMER_OFFSET = new Vector3f(100_000, 0, 0);
     
     //App States
@@ -89,15 +91,15 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     private void initViewPorts()
     {
         //View 1
-        cam.setViewPort(0f, .5f, 0f, 1f);
-        flyCam.setEnabled(false);
+        cam.setViewPort(.5f, 1f, 0f, 1f);
+        flyCam.setEnabled(true);
         
         //View 2
         cam2 = cam.clone();
         viewPort2 = renderManager.createMainView("Cam2Viewport", cam2);
         viewPort2.setClearFlags(true, true, true);
         viewPort2.attachScene(rootNode);
-        cam2.setViewPort(.5f, 1f, 0f, 1f);
+        cam2.setViewPort(0f, .5f, 0f, 1f);
     }
 
     private void initPlayer()
@@ -109,8 +111,8 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     
     private void initAppStates()
     {
-        platformerAppState = new PlatformerAppState(cam, viewPort, PLATFORMER_OFFSET, player, PLATFORM_PREFIX);
-        rpgAppState = new RPGAppState(cam2, viewPort2, player);
+        platformerAppState = new PlatformerAppState(cam2, viewPort2, PLATFORMER_OFFSET, player, PLATFORM_PREFIX);
+        rpgAppState = new RPGAppState(cam, viewPort, flyCam, player);
         menuAppState = new MenuAppState(guiFont);
         hudAppState = new HUDAppState(guiFont, player);
         pauseAppState = new PauseAppState(guiFont);
@@ -320,6 +322,11 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     public PlatformerAppState getPlatformerAppState()
     {
         return platformerAppState;
+    }
+    
+    public float getTime()
+    {
+        return timer;
     }
 
     @Override

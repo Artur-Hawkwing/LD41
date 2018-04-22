@@ -2,17 +2,21 @@ package mygame;
 
 import com.jme3.app.SimpleApplication;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.PhysicsCollisionEvent;
+import com.jme3.bullet.collision.PhysicsCollisionListener;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
+import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 
-public class Main extends SimpleApplication implements ActionListener
+public class Main extends SimpleApplication implements ActionListener, PhysicsCollisionListener
 {
     //Base Data
     private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
@@ -45,6 +49,10 @@ public class Main extends SimpleApplication implements ActionListener
     //Physics
     private static final Vector3f GRAVITY = new Vector3f(0, -30, 0),
             UP_VECTOR = new Vector3f(0, 1, 0);
+    
+    //Collision
+    private final String PLATFORM_PREFIX = "P",
+            RPG_PREFIX = "R";
     
     public static void main(String[] args) 
     {
@@ -97,7 +105,7 @@ public class Main extends SimpleApplication implements ActionListener
     
     private void initAppStates()
     {
-        platformerAppState = new PlatformerAppState(cam, viewPort, PLATFORMER_OFFSET, player);
+        platformerAppState = new PlatformerAppState(cam, viewPort, PLATFORMER_OFFSET, player, PLATFORM_PREFIX);
         rpgAppState = new RPGAppState(cam2, viewPort2, player);
         menuAppState = new MenuAppState(guiFont);
         hudAppState = new HUDAppState(guiFont, player);
@@ -260,6 +268,33 @@ public class Main extends SimpleApplication implements ActionListener
     public static Vector3f getUpVector()
     {
         return UP_VECTOR;
+    }
+    
+    public String getPlatformPrefix()
+    {
+        return PLATFORM_PREFIX;
+    }
+    
+    public String getRPGPrefix()
+    {
+        return RPG_PREFIX;
+    }
+
+    @Override
+    public void collision(PhysicsCollisionEvent event)
+    {
+        Spatial a = event.getNodeA();
+        Spatial b = event.getNodeB();
+        
+        if(a.getName().startsWith(PLATFORM_PREFIX) || b.getName().startsWith(PLATFORM_PREFIX))
+        {
+            platformerAppState.collision(a, b);
+        }
+        else
+        {
+            rpgAppState.collision(a, b);
+        }
+        
     }
     
 }

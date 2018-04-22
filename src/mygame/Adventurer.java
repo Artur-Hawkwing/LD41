@@ -13,10 +13,12 @@ public class Adventurer
 {
     //Base Data
     private final Player PLAYER;
+    private final String NAME;
             
-    public Adventurer(Player player)
+    public Adventurer(Player player, String name)
     {
         PLAYER = player;
+        NAME = name;
     }
 
     public void onAction(String name, boolean isPressed, float tpf) 

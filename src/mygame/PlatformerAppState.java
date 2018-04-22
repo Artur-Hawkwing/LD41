@@ -8,6 +8,7 @@ package mygame;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.light.AmbientLight;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
@@ -15,11 +16,16 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.ui.Picture;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.imageio.ImageIO;
 
 /**
@@ -47,15 +53,28 @@ public class PlatformerAppState extends BaseAppState
     //Camera Configuration
     private final int FUSTRUM_FAR = 1000;
     
+    //Map
+    private final Map<Color, BlockType> BLOCK_COLOR_MAPPING = new HashMap<>();
+    private final Map<Color, EnemyType> ENEMY_COLOR_MAPPING = new HashMap<>();
+    
+    //Enemies
+    private final List<Enemy> ENEMIES = new ArrayList<>();
+    private final List<Block> LEFT_BLOCKS = new ArrayList<>(),
+            RIGHT_BLOCKS = new ArrayList<>();
+    
     //Platformer
     private final Platformer PLATFORMER;
     
-    public PlatformerAppState(Camera camera, ViewPort viewPort, Vector3f offset, Player player)
+    //Collision
+    private final String PREFIX;
+    
+    public PlatformerAppState(Camera camera, ViewPort viewPort, Vector3f offset, Player player, String prefix)
     {
         CAMERA = camera;
         VIEW_PORT = viewPort;
         OFFSET = offset;
         PLAYER = player;
+        PREFIX = prefix;
         ROOT_NODE = Main.getMain().getRootNode();
         ASSET_MANAGER = Main.getMain().getAssetManager();
         GUI_NODE = Main.getMain().getGuiNode();
@@ -93,7 +112,7 @@ public class PlatformerAppState extends BaseAppState
         DIRECTIONAL_LIGHT.setDirection(new Vector3f(-1, -1, 0));
         DIRECTIONAL_LIGHT.setColor(ColorRGBA.White);
         
-        AMBIENT_LIGHT.setColor(ColorRGBA.White);
+        AMBIENT_LIGHT.setColor(ColorRGBA.White.mult(.5f));
         
         ROOT_NODE.addLight(DIRECTIONAL_LIGHT);
         ROOT_NODE.addLight(AMBIENT_LIGHT);
@@ -114,9 +133,30 @@ public class PlatformerAppState extends BaseAppState
     
     private void buildLevel()
     {
-        final int LENGTH = 1;
+        initBlockColorMapping();
+        initEnemyColorMappping();
+        generatePlatformsAndEnemies();
+    }
+    
+    private void initBlockColorMapping()
+    {
+        BLOCK_COLOR_MAPPING.put(Color.BLACK, BlockType.STANDARD);
+        BLOCK_COLOR_MAPPING.put(Color.YELLOW, BlockType.LEFT_END);
+        BLOCK_COLOR_MAPPING.put(Color.BLUE, BlockType.RIGHT_END);
+        BLOCK_COLOR_MAPPING.put(Color.RED, BlockType.DAMAGING);
+        BLOCK_COLOR_MAPPING.put(Color.GREEN, BlockType.FINISH);
+    }
+    
+    private void initEnemyColorMappping()
+    {
+        ENEMY_COLOR_MAPPING.put(Color.MAGENTA, EnemyType.SPIKEBALL);
+    }
+    
+    private void generatePlatformsAndEnemies()
+    {
+        final int LENGTH = 5;
         boolean first = true;
-        File file= new File("Assets/Maps/lvl1.png");
+        File file= new File("Assets/Maps/lvl2.png");
         try
         {
             BufferedImage image = ImageIO.read(file);
@@ -125,14 +165,30 @@ public class PlatformerAppState extends BaseAppState
                 for(int y = 0; y < image.getHeight(); y++)
                 {
                     Color c = new Color(image.getRGB(x, y));
-                    if(c.equals(Color.BLACK))
+                    BlockType blockType = BLOCK_COLOR_MAPPING.get(c);
+                    EnemyType enemyType = ENEMY_COLOR_MAPPING.get(c);
+                    
+                    if(blockType != null)
                     {
-                        Block b = new Block(ROOT_NODE, new Vector3f((image.getWidth() - x) * LENGTH, y, 0).add(OFFSET), LENGTH);
+                        Block block = new Block(ROOT_NODE, new Vector3f((image.getWidth() - x) * LENGTH, (image.getHeight() - y), 0).add(OFFSET), LENGTH, PREFIX + blockType.name());
+                        if(blockType.name().equals(BlockType.LEFT_END.name()))
+                        {
+                            LEFT_BLOCKS.add(block);
+                        }
+                        else if(blockType.name().equals(BlockType.RIGHT_END.name()))
+                        {
+                            RIGHT_BLOCKS.add(block);
+                        }
+                        
                         if(first)
                         {
-                            PLATFORMER.setSpawn(b.getLocation().add(new Vector3f(0, 5, 0)));
+                            PLATFORMER.setSpawn(block.getLocation().add(new Vector3f(0, 5, 0)));
                             first = false;
                         }
+                    }
+                    else if(enemyType != null)
+                    {
+                        ENEMIES.add(new Enemy(ROOT_NODE, new Vector3f((image.getWidth() - x) * LENGTH, (image.getHeight() - y), 0).add(OFFSET).add(new Vector3f(0, 5, 0)), enemyType));
                     }
                 }
             }
@@ -141,8 +197,6 @@ public class PlatformerAppState extends BaseAppState
         {
             ioe.printStackTrace();
         }
-        
-        
     }
 
     @Override
@@ -167,5 +221,80 @@ public class PlatformerAppState extends BaseAppState
     public void update(float tpf)
     {
         PLATFORMER.update(tpf);
+        for(Enemy e : ENEMIES)
+        {
+            e.update(tpf);
+            
+            if(e.getLocation().distance(PLATFORMER.getLocation()) < 3)
+            {
+                PLATFORMER.modHealth(-e.getEnemyType().getDamage());
+            }
+            
+            for(Block b : LEFT_BLOCKS)
+            {
+                if(e.getLocation().distance(b.getLocation()) < 10)
+                {
+                    e.setBackward(false);
+                }
+            }
+            for(Block b : RIGHT_BLOCKS)
+            {
+                if(e.getLocation().distance(b.getLocation()) < 10)
+                {
+                    e.setBackward(true);
+                }
+            }
+        }
+    }
+    
+    public void collision(Spatial a, Spatial b)
+    {
+        //If PLATFORMER is involved
+        if(a.getName().equals(PLAYER.getPlatformer().getName()) || b.getName().equals(PLAYER.getPlatformer().getName()))
+        {
+            PLATFORMER.collision(a, b);
+        }
+        
+        //Reverse enemy motion at end of blocks
+        else if(a.getName().startsWith(Enemy.getPrefix()) && (b.getName().equals(BlockType.LEFT_END.name())))
+        {
+            for(Enemy e : ENEMIES)
+            {
+                if(a.getName().equals(e.getName()))
+                {
+                    e.setBackward(false);
+                }
+            }
+        }
+        else if(a.getName().startsWith(Enemy.getPrefix()) && (b.getName().equals(BlockType.RIGHT_END.name())))
+        {
+            for(Enemy e : ENEMIES)
+            {
+                if(a.getName().equals(e.getName()))
+                {
+                    e.setBackward(false);
+                }
+            }
+        }
+        else if(b.getName().startsWith(Enemy.getPrefix()) && (a.getName().equals(BlockType.LEFT_END.name())))
+        {
+            for(Enemy e : ENEMIES)
+            {
+                if(b.getName().equals(e.getName()))
+                {
+                    e.setBackward(false);
+                }
+            }
+        }
+        else if(b.getName().startsWith(Enemy.getPrefix()) && (a.getName().equals(BlockType.RIGHT_END.name())))
+        {
+            for(Enemy e : ENEMIES)
+            {
+                if(b.getName().equals(e.getName()))
+                {
+                    e.setBackward(false);
+                }
+            }
+        }
     }
 }

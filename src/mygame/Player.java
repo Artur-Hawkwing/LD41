@@ -9,6 +9,7 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.scene.Spatial;
 
 /**
  *
@@ -24,6 +25,9 @@ public class Player implements ActionListener
     private final int MAX_HEALTH = 100;
     private int health = MAX_HEALTH;
     
+    //Name
+    private final String BASE_NAME = "Player";
+    
     //Input
     private final InputManager INPUT_MANAGER;
     public static final String W = "W",
@@ -33,8 +37,8 @@ public class Player implements ActionListener
     
     public Player()
     {
-        PLATFORMER = new Platformer(this);
-        ADVENTURER = new Adventurer(this);
+        PLATFORMER = new Platformer(this, Main.getMain().getPlatformPrefix() + BASE_NAME);
+        ADVENTURER = new Adventurer(this, Main.getMain().getRPGPrefix() + BASE_NAME);
         INPUT_MANAGER = Main.getMain().getInputManager();
         initInput();
     }

@@ -29,7 +29,7 @@ public class Platformer
     private Spatial model;
     private Camera camera;
     private final String MODEL_PATH = "Models/spherev1/spherev1.j3o",
-            NAME = "Platformer";
+            NAME;
     
     //Physics Data
     private final OpenCharacterControl OPEN_CHARACTER_CONTROL;
@@ -43,10 +43,16 @@ public class Platformer
     private boolean forward,
             backward;
     private final int SPEED = 1500;
+    
+    //Health
+    private float healthTimer = 0,
+            healthTimerGoal = .42f;
+    private boolean canChangeHealth = true;
         
-    public Platformer(Player player)
+    public Platformer(Player player, String name)
     {
         PLAYER = player;
+        NAME = name;
         OPEN_CHARACTER_CONTROL = new OpenCharacterControl(RADIUS, HEIGHT, MASS);
         ASSET_MANAGER = Main.getMain().getAssetManager();
         ROOT_NODE = Main.getMain().getRootNode();
@@ -69,6 +75,12 @@ public class Platformer
     {
         Vector3f location = getLocation();
         
+        healthTimer += tpf;
+        if(healthTimer > healthTimerGoal)
+        {
+            canChangeHealth = true;
+        }
+        
         if(location.y < -5)
         {
             setPhysicsLocation(spawn);
@@ -77,9 +89,8 @@ public class Platformer
         
         if(camera != null)
         {
-            
-            camera.setLocation(new Vector3f(location.x, 10, -100));
-            camera.lookAt(location.add(new Vector3f(0, 35,  0)), Main.getUpVector());
+            camera.setLocation(new Vector3f(location.x, 20, -100));
+            camera.lookAt(location.add(new Vector3f(0, 30,  0)), Main.getUpVector());
             LISTENER.setLocation(camera.getLocation());
             LISTENER.setRotation(camera.getRotation());
 
@@ -132,9 +143,19 @@ public class Platformer
         }
     }
     
+    public void collision(Spatial a, Spatial b)
+    {
+        
+    }
+    
     public void modHealth(int value)
     {
-        PLAYER.modHealth(value);
+        if(canChangeHealth)
+        {
+            PLAYER.modHealth(value);
+            canChangeHealth = false;
+            healthTimer = 0;
+        }
     }
     
     public int getHealth()
@@ -160,5 +181,10 @@ public class Platformer
     public void setCamera(Camera c)
     {
         camera = c;
+    }
+    
+    public String getName()
+    {
+        return NAME;
     }
 }

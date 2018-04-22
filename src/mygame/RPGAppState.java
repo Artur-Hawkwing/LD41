@@ -13,6 +13,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.Node;
+import com.jme3.scene.Spatial;
 import com.jme3.ui.Picture;
 
 /**
@@ -90,5 +91,17 @@ public class RPGAppState extends BaseAppState
     protected void onDisable() 
     {
         GUI_NODE.attachChild(BLACKNESS);
+    }
+    
+    @Override
+    public void update(float tpf)
+    {
+        
+    }
+    
+    public void collision(Spatial a, Spatial b)
+    {
+        Spatial collidedA = a;
+        Spatial collidedB = b;
     }
 }

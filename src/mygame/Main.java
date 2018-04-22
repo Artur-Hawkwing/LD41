@@ -54,8 +54,8 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
             UP_VECTOR = new Vector3f(0, 1, 0);
     
     //Collision
-    private final String PLATFORM_PREFIX = "P",
-            RPG_PREFIX = "R";
+    private final String PLATFORM_PREFIX = "P_",
+            RPG_PREFIX = "R_";
     
     //Timing
     private float timer = 0;
@@ -112,7 +112,7 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     private void initAppStates()
     {
         platformerAppState = new PlatformerAppState(cam2, viewPort2, PLATFORMER_OFFSET, player, PLATFORM_PREFIX);
-        rpgAppState = new RPGAppState(cam, viewPort, flyCam, player);
+        rpgAppState = new RPGAppState(cam, viewPort, flyCam, player, RPG_PREFIX);
         menuAppState = new MenuAppState(guiFont);
         hudAppState = new HUDAppState(guiFont, player);
         pauseAppState = new PauseAppState(guiFont);

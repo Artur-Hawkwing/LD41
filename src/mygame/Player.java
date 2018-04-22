@@ -106,7 +106,7 @@ public class Player implements ActionListener
             }
             else
             {
-                PLATFORMER.onAction(name, isPressed, tpf);
+                ADVENTURER.onAction(name, isPressed, tpf);
             }
         }
     }

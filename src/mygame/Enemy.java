@@ -67,7 +67,7 @@ public class Enemy
         mat.setTexture("Texture", ASSET_MANAGER.loadTexture("Effects/Explosion/flame.png"));
         enemyNode.setMaterial(mat);
         enemyNode.setImagesX(2); 
-        enemyNode.setImagesY(2); // 2x2 texture animation
+        enemyNode.setImagesY(2);
         enemyNode.setEndColor(ColorRGBA.Red); 
         enemyNode.setStartColor(ColorRGBA.Yellow);
         enemyNode.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2, 0));

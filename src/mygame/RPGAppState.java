@@ -8,6 +8,10 @@ package mygame;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.FlyByCamera;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -24,6 +28,8 @@ import com.jme3.terrain.heightmap.ImageBasedHeightMap;
 import com.jme3.texture.Texture;
 import com.jme3.texture.Texture.WrapMode;
 import com.jme3.ui.Picture;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -36,27 +42,36 @@ public class RPGAppState extends BaseAppState
     private final FlyByCamera FLY_CAM;
     private final ViewPort VIEW_PORT;
     private final Player PLAYER;
+    private final Adventurer ADVENTURER;
     private final AssetManager ASSET_MANAGER;
+    private final BulletAppState BULLET_APP_STATE;
     private final Node ROOT_NODE,
             GUI_NODE;
     private final Picture BLACKNESS;
     private final int WIDTH, 
         HEIGHT;
+    private final String PREFIX;
     
     //Camera Configuration
-    private final int FUSTRUM_FAR = 1000;
+    private final int FUSTRUM_FAR = 6000;
     
     //Map Data
    private TerrainQuad terrain;
+   
+   //PowerCells
+   private final List<PowerCell> POWER_CELLS = new ArrayList<>();
     
-    public RPGAppState(Camera camera, ViewPort viewPort, FlyByCamera flyCam, Player player)
+    public RPGAppState(Camera camera, ViewPort viewPort, FlyByCamera flyCam, Player player, String prefix)
     {
         CAMERA = camera;
         VIEW_PORT = viewPort;
         FLY_CAM = flyCam;
         PLAYER = player;
+        PREFIX = prefix;
+        ADVENTURER = PLAYER.getAdventurer();
         ROOT_NODE = Main.getMain().getRootNode();
         ASSET_MANAGER = Main.getMain().getAssetManager();
+        BULLET_APP_STATE = Main.getMain().getBulletAppState();
         GUI_NODE = Main.getMain().getGuiNode();
         BLACKNESS = new Picture("BLACKNESS");
         WIDTH = Main.getDimensions().width;
@@ -70,6 +85,8 @@ public class RPGAppState extends BaseAppState
         initViewPort();
         initDimming();
         initMap();
+        initPowerCells();
+        initAdventurer();
     }
     
     private void initCamera()
@@ -115,7 +132,7 @@ public class RPGAppState extends BaseAppState
 
         /** 2. Create the height map */
         AbstractHeightMap heightmap = null;
-        Texture heightMapImage = ASSET_MANAGER.loadTexture("Textures/heightMap.png");
+        Texture heightMapImage = ASSET_MANAGER.loadTexture("Textures/h.png");
         heightmap = new ImageBasedHeightMap(heightMapImage.getImage());
         heightmap.load();
 
@@ -125,12 +142,36 @@ public class RPGAppState extends BaseAppState
         /** 4. We give the terrain its material, position & scale it, and attach it. */
         terrain.setMaterial(mat_terrain);
         terrain.setLocalTranslation(0, -100, 0);
-        terrain.setLocalScale(2f, 1f, 2f);
+        terrain.setLocalScale(8f, 6f, 8f);
         ROOT_NODE.attachChild(terrain);
 
-        /** 5. The LOD (level of detail) depends on were the camera is: */
+        //Set up LOD
         TerrainLodControl control = new TerrainLodControl(terrain, CAMERA);
         terrain.addControl(control);
+        
+        //Attach terrain to world and physics space
+        CollisionShape sceneShape = CollisionShapeFactory.createMeshShape((Node) terrain);
+        RigidBodyControl mapBody = new RigidBodyControl(sceneShape, 0);
+        terrain.addControl(mapBody);
+        ROOT_NODE.attachChild(terrain);
+        BULLET_APP_STATE.getPhysicsSpace().add(mapBody);
+    }
+    
+    private void initPowerCells()
+    {
+        POWER_CELLS.add(new PowerCell(ROOT_NODE, coordinateOf(10, 10), PREFIX + "PowerCell", ADVENTURER));
+        POWER_CELLS.add(new PowerCell(ROOT_NODE, coordinateOf(-10, 10), PREFIX + "PowerCell", ADVENTURER));
+        POWER_CELLS.add(new PowerCell(ROOT_NODE, coordinateOf(10, -10), PREFIX + "PowerCell", ADVENTURER));
+        POWER_CELLS.add(new PowerCell(ROOT_NODE, coordinateOf(-10, -10), PREFIX + "PowerCell", ADVENTURER));
+    }
+    
+    private void initAdventurer()
+    {
+        CAMERA.setLocation(coordinateOf(0,0));
+        FLY_CAM.setMoveSpeed(0);
+        ADVENTURER.setSpawn(CAMERA.getLocation());
+        ADVENTURER.setCamera(CAMERA);
+        
     }
     
     public Vector3f coordinateOf(float x, float z)
@@ -146,7 +187,7 @@ public class RPGAppState extends BaseAppState
     @Override
     protected void cleanup(Application app) 
     {
-
+        
     }
 
     @Override

@@ -9,10 +9,17 @@ import com.jme3.asset.AssetManager;
 import com.jme3.audio.Listener;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.control.BetterCharacterControl;
+import com.jme3.effect.ParticleEmitter;
+import com.jme3.effect.ParticleMesh;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 /**
  *
@@ -48,6 +55,9 @@ public class Adventurer
     private float healthTimer = 0,
             healthTimerGoal = .35f;
     private boolean canChangeHealth = true;
+    
+    //Attacks
+    private final List<FireBall> FIREBALLS = new ArrayList<>();
         
     public Adventurer(Player player, String name)
     {
@@ -73,47 +83,15 @@ public class Adventurer
     
     public void update(float tpf)
     {
-        Vector3f location = getLocation();
+        camera.setLocation(getLocation());
         
-        healthTimer += tpf;
-        if(healthTimer > healthTimerGoal)
+        ListIterator<FireBall> it = FIREBALLS.listIterator();
+        while(it.hasNext())
         {
-            canChangeHealth = true;
-        }
-        
-        if(location.y < -5)
-        {
-            respawn();
-            modHealth(-10);
-            OPEN_CHARACTER_CONTROL.setWalkDirection(Vector3f.ZERO);
-        }
-        
-        if(camera != null)
-        {
-            camera.setLocation(new Vector3f(location.x, 20, -100));
-            camera.lookAt(location.add(new Vector3f(0, 30,  0)), Main.getUpVector());
-            LISTENER.setLocation(camera.getLocation());
-            LISTENER.setRotation(camera.getRotation());
-
-            Vector3f camDir = new Vector3f(),
-                    camLeft = new Vector3f(),
-                    walkDirection = new Vector3f(0, 0, 0);
-
-            camDir.set(camera.getDirection()).multLocal(.6f);
-            camLeft.set(camera.getLeft()).multLocal(.4f);
-
-            if(forward)
+            if(it.next().getCreationTime() - System.currentTimeMillis() > 5000)
             {
-                walkDirection.addLocal(camLeft.negate());
-                walkDirection.normalizeLocal().multLocal(SPEED * tpf);
+                it.remove();
             }
-            if(backward)
-            {
-                walkDirection.addLocal(camLeft);
-                walkDirection.normalizeLocal().multLocal(SPEED * tpf);
-            }
-
-            OPEN_CHARACTER_CONTROL.setWalkDirection(walkDirection);
         }
     }
 
@@ -123,7 +101,7 @@ public class Adventurer
         {
             case Player.W:
             {
-                OPEN_CHARACTER_CONTROL.jump();
+                fireBall();
             }
             break;
             case Player.A:
@@ -133,7 +111,7 @@ public class Adventurer
             break;
             case Player.S:
             {
-                claimPowerUps();
+                
             }
             break;
             case Player.D:
@@ -144,9 +122,9 @@ public class Adventurer
         }
     }
     
-    public void claimPowerUps()
+    public void fireBall()
     {
-        PLAYER.addPowerUps(Main.getMain().getPlatformerAppState().collectPowerUps(getLocation()));
+        FIREBALLS.add(new FireBall(ROOT_NODE, camera.getLocation(), camera.getDirection()));
     }
     
     public void modHealth(int value)

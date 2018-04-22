@@ -32,7 +32,7 @@ public class HUDAppState extends BaseAppState
     private final Player PLAYER;
     
     //Display
-    private final BitmapText HEALTH_TEXT, HEALTH_TEXT_2; 
+    private final BitmapText HEALTH_TEXT, HEALTH_TEXT_2, CROSSHAIRS; 
     
     public HUDAppState(BitmapFont guiFont, Player player)
     {
@@ -45,6 +45,9 @@ public class HUDAppState extends BaseAppState
         HEIGHT = Main.getDimensions().height;
         HEALTH_TEXT = new BitmapText(GUI_FONT, false);
         HEALTH_TEXT_2 = new BitmapText(GUI_FONT, false);
+        CROSSHAIRS = new BitmapText(GUI_FONT, false);
+        
+        displayCrossHairs();
     }
     
     private void updateLabels(int health, float time)
@@ -60,6 +63,15 @@ public class HUDAppState extends BaseAppState
         HEALTH_TEXT_2.setColor(ColorRGBA.Red);
         HEALTH_TEXT_2.setSize(20);
         HEALTH_TEXT_2.setLocalTranslation((3 * (WIDTH - (.039f * WIDTH))) / 4, HEIGHT, 0);
+    }
+    
+    private void displayCrossHairs()
+    {
+        CROSSHAIRS.setText("X");
+        CROSSHAIRS.setSize(GUI_FONT.getCharSet().getRenderedSize());
+        CROSSHAIRS.setColor(ColorRGBA.Red);
+        CROSSHAIRS.setSize(20);
+        CROSSHAIRS.setLocalTranslation((3 * WIDTH) / 4, HEIGHT / 2, 0);
     }
     
     @Override
@@ -79,6 +91,7 @@ public class HUDAppState extends BaseAppState
     {
         GUI_NODE.attachChild(HEALTH_TEXT);
         GUI_NODE.attachChild(HEALTH_TEXT_2);
+        GUI_NODE.attachChild(CROSSHAIRS);
     }
 
     @Override
@@ -86,6 +99,7 @@ public class HUDAppState extends BaseAppState
     {
         GUI_NODE.detachChild(HEALTH_TEXT);
         GUI_NODE.detachChild(HEALTH_TEXT_2);
+        GUI_NODE.detachChild(CROSSHAIRS);
     }
     
     @Override

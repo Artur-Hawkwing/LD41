@@ -164,7 +164,7 @@ public class PlatformerAppState extends BaseAppState
         final int LENGTH = 5;
         boolean first = true;
         int level = GENERATOR.nextInt(2) + 1;
-        File file= new File("Assets/Maps/lvl" + level + ".png");
+        File file= new File("Assets/Maps/lvl3" /*+ level*/ + ".png");
         try
         {
             BufferedImage image = ImageIO.read(file);
@@ -335,7 +335,7 @@ public class PlatformerAppState extends BaseAppState
     
     public void collision(Spatial a, Spatial b)
     {        
-        //Reverse enemy motion at end of blocks
+        /*//Reverse enemy motion at end of blocks
         if(a.getName().startsWith(Enemy.getPrefix()) && (b.getName().equals(BlockType.LEFT_END.name())))
         {
             for(Enemy e : ENEMIES)
@@ -375,6 +375,6 @@ public class PlatformerAppState extends BaseAppState
                     e.setBackward(false);
                 }
             }
-        }
+        }*/
     }
 }

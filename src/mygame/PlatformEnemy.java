@@ -71,7 +71,7 @@ public class PlatformEnemy
         enemyNode.setEndSize(2);
         enemyNode.setGravity(0, 0, 0);
         enemyNode.setLowLife(1f);
-        enemyNode.setHighLife(3f);
+        enemyNode.setHighLife(1f);
         enemyNode.getParticleInfluencer().setVelocityVariation(0.3f);
 
         ROOT_NODE.attachChild(enemyNode);

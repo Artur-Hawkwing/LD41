@@ -43,8 +43,8 @@ public class Fireball
         fire.setMaterial(mat);
         fire.setImagesX(2); 
         fire.setImagesY(2); // 2x2 texture animation
-        fire.setEndColor(ColorRGBA.Blue); 
-        fire.setStartColor(ColorRGBA.Green);
+        fire.setEndColor(ColorRGBA.Red); 
+        fire.setStartColor(ColorRGBA.Red);
         fire.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2, 0));
         fire.setStartSize(2);
         fire.setEndSize(2);

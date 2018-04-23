@@ -248,6 +248,7 @@ public class PlatformerAppState extends BaseAppState
     protected void cleanup(Application main) 
     {
         ROOT_NODE.removeLight(DIRECTIONAL_LIGHT);
+        ROOT_NODE.removeLight(AMBIENT_LIGHT);
         for(Block b : POWER_BLOCKS)
         {
             b.destroy();

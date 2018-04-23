@@ -164,7 +164,7 @@ public class Platformer
             PLAYER.modHealth(value);
             canChangeHealth = false;
             healthTimer = 0;
-            modSpeed(-.1f);
+            modSpeed(-.2f);
         }
     }
     

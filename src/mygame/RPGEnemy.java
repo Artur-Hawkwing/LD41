@@ -7,23 +7,21 @@ package mygame;
 
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.effect.ParticleEmitter;
 import com.jme3.effect.ParticleMesh;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
 import java.util.Random;
 
 /**
  *
  * @author jeffr
  */
-public class Enemy 
+public class RPGEnemy 
 {
     //Base Data
     private final AssetManager ASSET_MANAGER;
@@ -31,21 +29,17 @@ public class Enemy
     private final Node ROOT_NODE;
     private final BulletAppState BULLET_APP_STATE;
     private final Vector3f LOCATION;
-    private static final String PREFIX = Main.getMain().getPlatformPrefix() + "ENEMY";
+    private static final String PREFIX = Main.getMain().getRPGPrefix()+ "ENEMY";
     private final String NAME;
-    private final EnemyType TYPE;
-    private final OpenCharacterControl OPEN_CHARACTER_CONTROL;
-    private final float RADIUS = 2,
-            HEIGHT = 2,
-            MASS = 5;
-    private final int SPEED = 1000;
+    private final RPGEnemyType TYPE;
     private static int ID = 0;
+    private RigidBodyControl enemyControl;
     
     //Motion
     private final Random GENERATOR = new Random();
     private boolean backward;
     
-    public Enemy(Node rootNode, Vector3f location, EnemyType type)
+    public RPGEnemy(Node rootNode, Vector3f location, RPGEnemyType type)
     {
         ROOT_NODE = rootNode;
         LOCATION = location;
@@ -53,7 +47,6 @@ public class Enemy
         NAME = PREFIX + type.name() + ID;
         BULLET_APP_STATE = Main.getMain().getBulletAppState();
         ASSET_MANAGER = Main.getMain().getAssetManager();
-        OPEN_CHARACTER_CONTROL = new OpenCharacterControl(RADIUS, HEIGHT, MASS);
         backward = GENERATOR.nextBoolean();
         ID++;
         
@@ -68,46 +61,38 @@ public class Enemy
         enemyNode.setMaterial(mat);
         enemyNode.setImagesX(2); 
         enemyNode.setImagesY(2);
-        enemyNode.setEndColor(ColorRGBA.Red); 
-        enemyNode.setStartColor(ColorRGBA.Yellow);
+        enemyNode.setEndColor(TYPE.getEndColor()); 
+        enemyNode.setStartColor(TYPE.getStartColor());
         enemyNode.getParticleInfluencer().setInitialVelocity(new Vector3f(0, 2, 0));
-        enemyNode.setStartSize(2);
-        enemyNode.setEndSize(2);
+        enemyNode.setStartSize(TYPE.getSize());
+        enemyNode.setEndSize(TYPE.getSize());
         enemyNode.setGravity(0, 0, 0);
         enemyNode.setLowLife(1f);
         enemyNode.setHighLife(3f);
         enemyNode.getParticleInfluencer().setVelocityVariation(0.3f);
 
         ROOT_NODE.attachChild(enemyNode);
-        enemyNode.addControl(OPEN_CHARACTER_CONTROL);
-        BULLET_APP_STATE.getPhysicsSpace().add(OPEN_CHARACTER_CONTROL);
-        OPEN_CHARACTER_CONTROL.warp(LOCATION);
+        
+        //Collision Shape
+        SphereCollisionShape fireBallShape = new SphereCollisionShape(TYPE.getSize());
+
+        //Position
+        enemyNode.setLocalTranslation(LOCATION);
+        enemyControl = new RigidBodyControl(fireBallShape, 0);
+        enemyNode.addControl(enemyControl);
+        BULLET_APP_STATE.getPhysicsSpace().add(enemyControl);
     }
     
     public Vector3f getLocation()
     {
-        return OPEN_CHARACTER_CONTROL.getLocation();
+        return enemyControl.getPhysicsLocation();
     }
     
     public void update(float tpf)
     {
-        Vector3f walkDirection = new Vector3f(backward ? 1 : -1, 0, 0),
-                location = getLocation();
-        walkDirection.multLocal(SPEED * tpf);
         
-        if(location.z > .5f | location.z < -.5f)
-        {
-            OPEN_CHARACTER_CONTROL.warp(new Vector3f(location.x, location.y, 0));
-        }
+    }
 
-        OPEN_CHARACTER_CONTROL.setWalkDirection(walkDirection);
-    }
-    
-    public void setBackward(boolean value)
-    {
-        backward = value;
-    }
-    
     public static String getPrefix()
     {
         return PREFIX;
@@ -118,8 +103,14 @@ public class Enemy
         return NAME;
     }
     
-    public EnemyType getEnemyType()
+    public RPGEnemyType getEnemyType()
     {
         return TYPE;
+    }
+    
+    public void destroy()
+    {
+        ROOT_NODE.detachChild(enemyNode);
+        BULLET_APP_STATE.getPhysicsSpace().remove(enemyControl);
     }
 }

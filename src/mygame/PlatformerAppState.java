@@ -56,8 +56,8 @@ public class PlatformerAppState extends BaseAppState
     
     //Map
     private final Map<Color, BlockType> BLOCK_COLOR_MAPPING = new HashMap<>();
-    private final Map<Color, EnemyType> ENEMY_COLOR_MAPPING = new HashMap<>();
-    private final List<Enemy> ENEMIES = new ArrayList<>();
+    private final Map<Color, PlatformEnemyType> ENEMY_COLOR_MAPPING = new HashMap<>();
+    private final List<PlatformEnemy> ENEMIES = new ArrayList<>();
     private final List<Block> LEFT_BLOCKS = new ArrayList<>(),
             RIGHT_BLOCKS = new ArrayList<>(),
             POWER_BLOCKS = new ArrayList<>(),
@@ -156,7 +156,7 @@ public class PlatformerAppState extends BaseAppState
     
     private void initEnemyColorMappping()
     {
-        ENEMY_COLOR_MAPPING.put(Color.MAGENTA, EnemyType.SPIKEBALL);
+        ENEMY_COLOR_MAPPING.put(Color.MAGENTA, PlatformEnemyType.SPIKEBALL);
     }
     
     private void generatePlatformsAndEnemies()
@@ -164,7 +164,7 @@ public class PlatformerAppState extends BaseAppState
         final int LENGTH = 5;
         boolean first = true;
         int level = GENERATOR.nextInt(2) + 1;
-        File file= new File("Assets/Maps/lvl3" /*+ level*/ + ".png");
+        File file= new File("Assets/Maps/lvl1" /*+ level*/ + ".png");
         try
         {
             BufferedImage image = ImageIO.read(file);
@@ -174,11 +174,11 @@ public class PlatformerAppState extends BaseAppState
                 {
                     Color c = new Color(image.getRGB(x, y));
                     BlockType blockType = BLOCK_COLOR_MAPPING.get(c);
-                    EnemyType enemyType = ENEMY_COLOR_MAPPING.get(c);
+                    PlatformEnemyType enemyType = ENEMY_COLOR_MAPPING.get(c);
                     
                     if(blockType != null)
                     {
-                        Block block = new Block(ROOT_NODE, new Vector3f((image.getWidth() - x) * (2 * LENGTH), (image.getHeight() - y), 0).add(OFFSET), LENGTH, PREFIX + blockType.name(), blockType);
+                        Block block = new Block(ROOT_NODE, new Vector3f((image.getWidth() - x) * (2 * LENGTH), (image.getHeight() - y), 0).add(OFFSET), LENGTH, blockType);
                         if(blockType.name().equals(BlockType.LEFT_END.name()))
                         {
                             LEFT_BLOCKS.add(block);
@@ -210,7 +210,7 @@ public class PlatformerAppState extends BaseAppState
                     }
                     else if(enemyType != null)
                     {
-                        ENEMIES.add(new Enemy(ROOT_NODE, new Vector3f((image.getWidth() - x) * LENGTH, (image.getHeight() - y), 0).add(OFFSET).add(new Vector3f(0, 5, 0)), enemyType));
+                        ENEMIES.add(new PlatformEnemy(ROOT_NODE, new Vector3f((image.getWidth() - x) * LENGTH, (image.getHeight() - y), 0).add(OFFSET).add(new Vector3f(0, 5, 0)), enemyType));
                     }
                 }
             }
@@ -228,7 +228,7 @@ public class PlatformerAppState extends BaseAppState
         float x = minX + (GENERATOR.nextFloat() * (maxX - minX));
         float y = 5 + GENERATOR.nextFloat() * 20;
 
-        Enemy e = new Enemy(ROOT_NODE, new Vector3f(x, y, 0), EnemyType.SPIKEBALL);
+        PlatformEnemy e = new PlatformEnemy(ROOT_NODE, new Vector3f(x, y, 0), PlatformEnemyType.SPIKEBALL);
         ENEMIES.add(e);
         System.out.println(e.getLocation());
     }
@@ -278,8 +278,7 @@ public class PlatformerAppState extends BaseAppState
             Block b = it.next();
             if(b.getLocation().distance(location) < 20)
             {
-                PowerUp[] values = PowerUp.values();
-                powerUps.add(values[GENERATOR.nextInt(values.length)]);
+                powerUps.add(PowerUp.ADD_SPEARS);
                 b.destroy();
                 it.remove();
             }
@@ -307,38 +306,42 @@ public class PlatformerAppState extends BaseAppState
             }
         }
         
-        for(Enemy e : ENEMIES)
+        for(PlatformEnemy e : ENEMIES)
         {
             e.update(tpf);
-            
-            if(e.getLocation().distance(PLATFORMER.getLocation()) < 3)
-            {
-                PLATFORMER.modHealth(-e.getEnemyType().getDamage());
-            }
-            
-            for(Block b : LEFT_BLOCKS)
-            {
-                if(e.getLocation().distance(b.getLocation()) < 10)
-                {
-                    e.setBackward(false);
-                }
-            }
-            for(Block b : RIGHT_BLOCKS)
-            {
-                if(e.getLocation().distance(b.getLocation()) < 10)
-                {
-                    e.setBackward(true);
-                }
-            }
         }
     }
     
     public void collision(Spatial a, Spatial b)
     {        
-        /*//Reverse enemy motion at end of blocks
-        if(a.getName().startsWith(Enemy.getPrefix()) && (b.getName().equals(BlockType.LEFT_END.name())))
+        //Damage player
+        if(a.getName().startsWith(PlatformEnemy.getPrefix()) && b.getName().equals(PLATFORMER.getName()))
         {
-            for(Enemy e : ENEMIES)
+            for(PlatformEnemy e : ENEMIES)
+            {
+                if(a.getName().equals(e.getName()))
+                {
+                    System.out.println(2);
+                    PLATFORMER.modHealth(-e.getEnemyType().getDamage());
+                }
+            }
+        }
+        else if(b.getName().startsWith(PlatformEnemy.getPrefix()) && a.getName().equals(PLATFORMER.getName()))
+        {
+            for(PlatformEnemy e : ENEMIES)
+            {
+                if(b.getName().equals(e.getName()))
+                {
+                    System.out.println(2);
+                    PLATFORMER.modHealth(-e.getEnemyType().getDamage());
+                }
+            }
+        }
+        
+        //Reverse enemy motion at end of blocks
+        if(a.getName().startsWith(PlatformEnemy.getPrefix()) && (b.getName().equals(Main.getMain().getPlatformPrefix() + BlockType.LEFT_END.name())))
+        {
+            for(PlatformEnemy e : ENEMIES)
             {
                 if(a.getName().equals(e.getName()))
                 {
@@ -346,19 +349,19 @@ public class PlatformerAppState extends BaseAppState
                 }
             }
         }
-        else if(a.getName().startsWith(Enemy.getPrefix()) && (b.getName().equals(BlockType.RIGHT_END.name())))
+        else if(a.getName().startsWith(PlatformEnemy.getPrefix()) && (b.getName().equals(Main.getMain().getPlatformPrefix() + BlockType.RIGHT_END.name())))
         {
-            for(Enemy e : ENEMIES)
+            for(PlatformEnemy e : ENEMIES)
             {
                 if(a.getName().equals(e.getName()))
                 {
-                    e.setBackward(false);
+                    e.setBackward(true);
                 }
             }
         }
-        else if(b.getName().startsWith(Enemy.getPrefix()) && (a.getName().equals(BlockType.LEFT_END.name())))
+        else if(b.getName().startsWith(PlatformEnemy.getPrefix()) && (a.getName().equals(Main.getMain().getPlatformPrefix() + BlockType.LEFT_END.name())))
         {
-            for(Enemy e : ENEMIES)
+            for(PlatformEnemy e : ENEMIES)
             {
                 if(b.getName().equals(e.getName()))
                 {
@@ -366,15 +369,15 @@ public class PlatformerAppState extends BaseAppState
                 }
             }
         }
-        else if(b.getName().startsWith(Enemy.getPrefix()) && (a.getName().equals(BlockType.RIGHT_END.name())))
+        else if(b.getName().startsWith(PlatformEnemy.getPrefix()) && (a.getName().equals(Main.getMain().getPlatformPrefix() + BlockType.RIGHT_END.name())))
         {
-            for(Enemy e : ENEMIES)
+            for(PlatformEnemy e : ENEMIES)
             {
                 if(b.getName().equals(e.getName()))
                 {
-                    e.setBackward(false);
+                    e.setBackward(true);
                 }
             }
-        }*/
+        }
     }
 }

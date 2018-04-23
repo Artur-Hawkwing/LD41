@@ -11,7 +11,6 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.renderer.ViewPort;
-import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.system.AppSettings;
 import java.awt.Dimension;
@@ -82,6 +81,7 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     public void simpleInitApp() 
     {
         initViewPorts();
+        initPhysics();
         initPlayer();
         initAppStates();
         initInput();
@@ -101,11 +101,16 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         viewPort2.attachScene(rootNode);
         cam2.setViewPort(0f, .5f, 0f, 1f);
     }
-
-    private void initPlayer()
+    
+    private void initPhysics()
     {
         bulletAppState = new BulletAppState();
         stateManager.attach(bulletAppState);
+        bulletAppState.getPhysicsSpace().addCollisionListener(this);
+    }
+
+    private void initPlayer()
+    {
         player = new Player();
     }
     
@@ -335,7 +340,7 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         Spatial a = event.getNodeA();
         Spatial b = event.getNodeB();
         
-        System.out.println(a.getName() + " " + b.getName());
+        
         
         if(a.getName().startsWith(PLATFORM_PREFIX) || b.getName().startsWith(PLATFORM_PREFIX))
         {

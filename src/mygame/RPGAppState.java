@@ -30,6 +30,7 @@ import com.jme3.texture.Texture.WrapMode;
 import com.jme3.ui.Picture;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  *
@@ -58,9 +59,9 @@ public class RPGAppState extends BaseAppState
     //Map Data
    private TerrainQuad terrain;
    
-   //PowerCells
-   private final List<PowerCell> POWER_CELLS = new ArrayList<>();
-    
+   //Enemies
+   private final List<RPGEnemy> ENMEIES = new ArrayList<>();
+
     public RPGAppState(Camera camera, ViewPort viewPort, FlyByCamera flyCam, Player player, String prefix)
     {
         CAMERA = camera;
@@ -85,8 +86,8 @@ public class RPGAppState extends BaseAppState
         initViewPort();
         initDimming();
         initMap();
-        initPowerCells();
         initAdventurer();
+        ENMEIES.add(new RPGEnemy(ROOT_NODE, ADVENTURER.getLocation().add(new Vector3f(10, 0, 10)), RPGEnemyType.COMMON));
     }
     
     private void initCamera()
@@ -96,7 +97,7 @@ public class RPGAppState extends BaseAppState
     
     private void initViewPort()
     {
-        VIEW_PORT.setBackgroundColor(new ColorRGBA(0.7f, 0.8f, 1f, 1f));
+        VIEW_PORT.setBackgroundColor(new ColorRGBA(25 / 255f, 25 / 255f, 80 / 255f, 255 / 255f));
     }
     
     private void initDimming()
@@ -132,7 +133,7 @@ public class RPGAppState extends BaseAppState
 
         /** 2. Create the height map */
         AbstractHeightMap heightmap = null;
-        Texture heightMapImage = ASSET_MANAGER.loadTexture("Textures/h.png");
+        Texture heightMapImage = ASSET_MANAGER.loadTexture("Textures/heightMapv1.png");
         heightmap = new ImageBasedHeightMap(heightMapImage.getImage());
         heightmap.load();
 
@@ -155,14 +156,6 @@ public class RPGAppState extends BaseAppState
         terrain.addControl(mapBody);
         ROOT_NODE.attachChild(terrain);
         BULLET_APP_STATE.getPhysicsSpace().add(mapBody);
-    }
-    
-    private void initPowerCells()
-    {
-        POWER_CELLS.add(new PowerCell(ROOT_NODE, coordinateOf(10, 10), PREFIX + "PowerCell", ADVENTURER));
-        POWER_CELLS.add(new PowerCell(ROOT_NODE, coordinateOf(-10, 10), PREFIX + "PowerCell", ADVENTURER));
-        POWER_CELLS.add(new PowerCell(ROOT_NODE, coordinateOf(10, -10), PREFIX + "PowerCell", ADVENTURER));
-        POWER_CELLS.add(new PowerCell(ROOT_NODE, coordinateOf(-10, -10), PREFIX + "PowerCell", ADVENTURER));
     }
     
     private void initAdventurer()
@@ -208,12 +201,53 @@ public class RPGAppState extends BaseAppState
     @Override
     public void update(float tpf)
     {
-        
+        ADVENTURER.update(tpf);
     }
     
     public void collision(Spatial a, Spatial b)
     {
-        Spatial collidedA = a;
-        Spatial collidedB = b;
+        if(a.getName().startsWith(RPGEnemy.getPrefix()) && b.getName().equals(Fireball.getName()))
+        {
+            ListIterator<RPGEnemy> it = ENMEIES.listIterator();
+            while(it.hasNext())
+            {
+                RPGEnemy e = it.next();
+                if(e.getName().equals(a.getName()))
+                {
+                    switch(e.getEnemyType())
+                    {
+                        case SPECIAL:
+                        {
+                            PLAYER.addPowerUp(e.getEnemyType().getPowerUp());
+                        }
+                        break;
+                    }
+                    it.remove();
+                }
+                
+            }
+        }
+        
+        else if(b.getName().startsWith(RPGEnemy.getPrefix()) && a.getName().equals(Fireball.getName()))
+        {
+            ListIterator<RPGEnemy> it = ENMEIES.listIterator();
+            while(it.hasNext())
+            {
+                RPGEnemy e = it.next();
+                if(e.getName().equals(b.getName()))
+                {
+                    switch(e.getEnemyType())
+                    {
+                        case SPECIAL:
+                        {
+                            PLAYER.addPowerUp(e.getEnemyType().getPowerUp());
+                        }
+                        break;
+                    }
+                    it.remove();
+                }
+                
+            }
+        }
     }
 }

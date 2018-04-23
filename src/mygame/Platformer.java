@@ -8,7 +8,6 @@ package mygame;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.Listener;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.control.BetterCharacterControl;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
@@ -43,16 +42,17 @@ public class Platformer
     private boolean forward,
             backward;
     private final int SPEED = 1500;
+    private float speedFactor = 1f;
     
     //Health
     private float healthTimer = 0,
             healthTimerGoal = .35f;
     private boolean canChangeHealth = true;
         
-    public Platformer(Player player, String name)
+    public Platformer(Player player)
     {
         PLAYER = player;
-        NAME = name;
+        NAME = Main.getMain().getPlatformPrefix() + "PLATFORMER";
         OPEN_CHARACTER_CONTROL = new OpenCharacterControl(RADIUS, HEIGHT, MASS);
         ASSET_MANAGER = Main.getMain().getAssetManager();
         ROOT_NODE = Main.getMain().getRootNode();
@@ -105,12 +105,12 @@ public class Platformer
             if(forward)
             {
                 walkDirection.addLocal(camLeft.negate());
-                walkDirection.normalizeLocal().multLocal(SPEED * tpf);
+                walkDirection.normalizeLocal().multLocal(SPEED * speedFactor * tpf);
             }
             if(backward)
             {
                 walkDirection.addLocal(camLeft);
-                walkDirection.normalizeLocal().multLocal(SPEED * tpf);
+                walkDirection.normalizeLocal().multLocal(SPEED * speedFactor * tpf);
             }
 
             OPEN_CHARACTER_CONTROL.setWalkDirection(walkDirection);
@@ -159,6 +159,11 @@ public class Platformer
         }
     }
     
+    public void modSpeed(float value)
+    {
+        speedFactor += .1f;
+    }
+    
     public void stop()
     {
         OPEN_CHARACTER_CONTROL.setWalkDirection(new Vector3f(0, 0, 0));
@@ -197,5 +202,10 @@ public class Platformer
     public String getName()
     {
         return NAME;
+    }
+    
+    public float getSpeedFactor()
+    {
+        return speedFactor;
     }
 }

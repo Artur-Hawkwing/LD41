@@ -34,12 +34,12 @@ public class Block
     CollisionShape blockShape;
     RigidBodyControl blockBody;
     
-    public Block(Node rootNode, Vector3f location, float length, String name, BlockType type)
+    public Block(Node rootNode, Vector3f location, float length, BlockType type)
     {
         ROOT_NODE = rootNode;
         LOCATION = location;
         LENGTH = length;
-        NAME = name;
+        NAME = Main.getMain().getPlatformPrefix() + type.name();
         TYPE = type;
         BULLET_APP_STATE = Main.getMain().getBulletAppState();
         ASSET_MANAGER = Main.getMain().getAssetManager();

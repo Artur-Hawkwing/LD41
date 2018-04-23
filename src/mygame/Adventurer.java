@@ -8,11 +8,6 @@ package mygame;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.Listener;
 import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.control.BetterCharacterControl;
-import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
@@ -39,7 +34,6 @@ public class Adventurer
             NAME;
     
     //Physics Data
-    private final OpenCharacterControl OPEN_CHARACTER_CONTROL;
     private final float RADIUS = 1,
             HEIGHT = 2,
             MASS = 5;
@@ -52,40 +46,37 @@ public class Adventurer
     private final int SPEED = 1500;
     
     //Health
-    private float healthTimer = 0,
-            healthTimerGoal = .35f;
-    private boolean canChangeHealth = true;
+    private float spearTimer = 0;
+    private final float SPEAR_DELAY = .35f;
+    private boolean canThrowSpear = true;
     
     //Attacks
-    private final List<FireBall> FIREBALLS = new ArrayList<>();
+    private final List<Spear> SPEARS = new ArrayList<>();
+    private int spearNum = 10;
         
     public Adventurer(Player player, String name)
     {
         PLAYER = player;
         NAME = name;
-        OPEN_CHARACTER_CONTROL = new OpenCharacterControl(RADIUS, HEIGHT, MASS);
         ASSET_MANAGER = Main.getMain().getAssetManager();
         ROOT_NODE = Main.getMain().getRootNode();
         BULLET_APP_STATE = Main.getMain().getBulletAppState();
         LISTENER = Main.getMain().getListener();
-        initPhysics();
-    }
-    
-    private void initPhysics()
-    {
-        model = ASSET_MANAGER.loadModel(MODEL_PATH);
-        model.setName(NAME);
-        ROOT_NODE.attachChild(model);
-        model.addControl(OPEN_CHARACTER_CONTROL);
-        OPEN_CHARACTER_CONTROL.setJumpForce(JUMP_FORCE);
-        BULLET_APP_STATE.getPhysicsSpace().add(OPEN_CHARACTER_CONTROL);
     }
     
     public void update(float tpf)
     {
-        camera.setLocation(getLocation());
+        spearTimer += tpf;
         
-        ListIterator<FireBall> it = FIREBALLS.listIterator();
+        camera.setLocation(getLocation());
+        LISTENER.setLocation(getLocation());
+        
+        if(spearTimer >= SPEAR_DELAY)
+        {
+            canThrowSpear = true;
+        }
+        
+        ListIterator<Spear> it = SPEARS.listIterator();
         while(it.hasNext())
         {
             if(it.next().getCreationTime() - System.currentTimeMillis() > 5000)
@@ -101,7 +92,7 @@ public class Adventurer
         {
             case Player.W:
             {
-                fireBall();
+                spear();
             }
             break;
             case Player.A:
@@ -122,24 +113,20 @@ public class Adventurer
         }
     }
     
-    public void fireBall()
+    public void spear()
     {
-        FIREBALLS.add(new FireBall(ROOT_NODE, camera.getLocation(), camera.getDirection()));
+        if(canThrowSpear && spearNum > 0)
+        {
+            SPEARS.add(new Spear(ROOT_NODE, camera.getLocation(), camera.getDirection()));
+            spearTimer = 0;
+            canThrowSpear = false;
+            spearNum--;
+        }
     }
     
     public void modHealth(int value)
     {
-        if(canChangeHealth)
-        {
-            PLAYER.modHealth(value);
-            canChangeHealth = false;
-            healthTimer = 0;
-        }
-    }
-    
-    public void stop()
-    {
-        OPEN_CHARACTER_CONTROL.setWalkDirection(new Vector3f(0, 0, 0));
+        PLAYER.modHealth(value);
     }
     
     public int getHealth()
@@ -147,24 +134,24 @@ public class Adventurer
         return PLAYER.getHealth();
     }
     
+    public int getSpearNum()
+    {
+        return spearNum;
+    }
+    
+    public void modSpears(int value)
+    {
+        spearNum += value;
+    }
+    
     public void setSpawn(Vector3f location)
     {
         spawn = location;
     }
     
-    public void respawn()
-    {
-        OPEN_CHARACTER_CONTROL.warp(spawn);
-    }
-    
-    private void setPhysicsLocation(Vector3f location)
-    {
-        OPEN_CHARACTER_CONTROL.warp(location);
-    }
-    
     public Vector3f getLocation()
     {
-        return ROOT_NODE.getChild(NAME).getLocalTranslation();
+        return camera.getLocation();
     }
     
     public void setCamera(Camera c)

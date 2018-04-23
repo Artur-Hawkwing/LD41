@@ -11,7 +11,7 @@ import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 
-public class FireBall
+public class Fireball
 {
     public static final long MAX_TIME = 3;
     private ParticleEmitter fire;
@@ -21,20 +21,19 @@ public class FireBall
     private final AssetManager ASSET_MANAGER;
     private final Vector3f START_LOCATION, DIRECTION;
     private static final String NAME = "FIREBALL";
-    
-    public FireBall(Node rootNode, Vector3f location, Vector3f direction)
-    {
 
+    public Fireball(Node rootNode, Vector3f location, Vector3f target)
+    {
         ROOT_NODE = rootNode;
         START_LOCATION = location;
-        DIRECTION = direction;
+        DIRECTION = target.subtract(location);
         BULLET_APP_STATE = Main.getMain().getBulletAppState();
         CREATION_TIME = System.currentTimeMillis();
         ASSET_MANAGER = Main.getMain().getAssetManager();
         
         launchFireBall();
     }
-    
+
     private void launchFireBall()
     {
         fire = new ParticleEmitter(NAME, ParticleMesh.Type.Triangle, 30);
@@ -66,7 +65,7 @@ public class FireBall
         BULLET_APP_STATE.getPhysicsSpace().add(fireControl);
         fireControl.setLinearVelocity(DIRECTION.normalizeLocal().mult(250));
     }
-    
+
     public void destroy()
     {
         ROOT_NODE.detachChild(fire);
@@ -77,7 +76,7 @@ public class FireBall
     {
         return CREATION_TIME;
     }
-    
+
     public static String getName()
     {
         return NAME;

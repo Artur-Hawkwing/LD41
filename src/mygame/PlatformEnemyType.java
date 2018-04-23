@@ -9,7 +9,7 @@ package mygame;
  *
  * @author jeffr
  */
-public enum EnemyType 
+public enum PlatformEnemyType 
 {
     SPIKEBALL
     {

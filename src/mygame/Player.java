@@ -38,7 +38,7 @@ public class Player implements ActionListener
     
     public Player()
     {
-        PLATFORMER = new Platformer(this, Main.getMain().getPlatformPrefix() + BASE_NAME);
+        PLATFORMER = new Platformer(this);
         ADVENTURER = new Adventurer(this, Main.getMain().getRPGPrefix() + BASE_NAME);
         INPUT_MANAGER = Main.getMain().getInputManager();
         initInput();
@@ -57,9 +57,29 @@ public class Player implements ActionListener
         INPUT_MANAGER.addListener(this, D);
     }
     
+    public void addPowerUp(PowerUp p)
+    {
+        switch(p)
+        {
+            case ADD_SPEARS:
+            {
+                ADVENTURER.modSpears((int) PowerUp.ADD_SPEARS.getValue());
+            }
+            break;
+            case ADD_SPEED:
+            {
+                PLATFORMER.modSpeed(PowerUp.ADD_SPEED.getValue());
+            }
+            break;
+        }
+    }
+    
     public void addPowerUps(List<PowerUp> powerUps)
     {
-        //ADVENTURER.resolvePowerUps(powerUps);
+        for(PowerUp p : powerUps)
+        {
+            addPowerUp(p);
+        }
     }
     
     public void modHealth(int value)

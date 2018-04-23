@@ -50,15 +50,15 @@ public class HUDAppState extends BaseAppState
         displayCrossHairs();
     }
     
-    private void updateLabels(int health, float time)
+    private void updateLabels(int health, float time, float speed, int spears)
     {
-        HEALTH_TEXT.setText("Health: " + health + "\nTime: " + (int) time);
+        HEALTH_TEXT.setText("Health: " + health + "\nTime: " + (int) time + "\nSpeed: " + speed);
         HEALTH_TEXT.setSize(GUI_FONT.getCharSet().getRenderedSize());
         HEALTH_TEXT.setColor(ColorRGBA.Red);
         HEALTH_TEXT.setSize(20);
         HEALTH_TEXT.setLocalTranslation((WIDTH - (.039f * WIDTH)) / 4, HEIGHT, 0);
         
-        HEALTH_TEXT_2.setText("Health: " + health + "\nTime: " + (int) time);
+        HEALTH_TEXT_2.setText("Health: " + health + "\nTime: " + (int) time + "\nSpears: " + spears);
         HEALTH_TEXT_2.setSize(GUI_FONT.getCharSet().getRenderedSize());
         HEALTH_TEXT_2.setColor(ColorRGBA.Red);
         HEALTH_TEXT_2.setSize(20);
@@ -105,6 +105,6 @@ public class HUDAppState extends BaseAppState
     @Override
     public void update(float tpf)
     {
-        updateLabels(PLAYER.getHealth(), Main.getMain().getTime());
+        updateLabels(PLAYER.getHealth(), Main.getMain().getTime(), PLAYER.getPlatformer().getSpeedFactor(), PLAYER.getAdventurer().getSpearNum());
     }
 }

@@ -11,6 +11,23 @@ package mygame;
  */
 public enum PowerUp 
 {
-    A,
-    B;
+    ADD_SPEARS
+    {
+        @Override
+        public float getValue()
+        {
+            return 10;
+        }
+    },
+    
+    ADD_SPEED
+    {
+        @Override
+        public float getValue()
+        {
+            return .1f;
+        }
+    };
+    
+    public abstract float getValue();
 }

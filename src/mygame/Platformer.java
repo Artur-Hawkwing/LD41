@@ -189,6 +189,8 @@ public class Platformer
     public void stop()
     {
         OPEN_CHARACTER_CONTROL.setWalkDirection(new Vector3f(0, 0, 0));
+        forward = false;
+        backward = false;
     }
     
     public int getHealth()

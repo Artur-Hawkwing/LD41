@@ -32,7 +32,10 @@ public class HUDAppState extends BaseAppState
     private final Player PLAYER;
     
     //Display
-    private final BitmapText HEALTH_TEXT, HEALTH_TEXT_2, CROSSHAIRS; 
+    private final BitmapText HEALTH_TEXT,
+            HEALTH_TEXT_2, 
+            CROSSHAIRS; 
+    private final int TEXT_SIZE;
     
     public HUDAppState(BitmapFont guiFont, Player player)
     {
@@ -46,6 +49,7 @@ public class HUDAppState extends BaseAppState
         HEALTH_TEXT = new BitmapText(GUI_FONT, false);
         HEALTH_TEXT_2 = new BitmapText(GUI_FONT, false);
         CROSSHAIRS = new BitmapText(GUI_FONT, false);
+        TEXT_SIZE = WIDTH / 96;
         
         displayCrossHairs();
     }
@@ -55,13 +59,13 @@ public class HUDAppState extends BaseAppState
         HEALTH_TEXT.setText("Health: " + health + "\nTime: " + (int) time + "\nSpeed: " + speed);
         HEALTH_TEXT.setSize(GUI_FONT.getCharSet().getRenderedSize());
         HEALTH_TEXT.setColor(ColorRGBA.Red);
-        HEALTH_TEXT.setSize(20);
+        HEALTH_TEXT.setSize(TEXT_SIZE);
         HEALTH_TEXT.setLocalTranslation((WIDTH - (.039f * WIDTH)) / 4, HEIGHT, 0);
         
         HEALTH_TEXT_2.setText("Health: " + health + "\nTime: " + (int) time + "\nSpears: " + spears);
         HEALTH_TEXT_2.setSize(GUI_FONT.getCharSet().getRenderedSize());
         HEALTH_TEXT_2.setColor(ColorRGBA.Red);
-        HEALTH_TEXT_2.setSize(20);
+        HEALTH_TEXT_2.setSize(TEXT_SIZE);
         HEALTH_TEXT_2.setLocalTranslation((3 * (WIDTH - (.039f * WIDTH))) / 4, HEIGHT, 0);
     }
     
@@ -70,7 +74,7 @@ public class HUDAppState extends BaseAppState
         CROSSHAIRS.setText("X");
         CROSSHAIRS.setSize(GUI_FONT.getCharSet().getRenderedSize());
         CROSSHAIRS.setColor(ColorRGBA.Red);
-        CROSSHAIRS.setSize(20);
+        CROSSHAIRS.setSize(TEXT_SIZE);
         CROSSHAIRS.setLocalTranslation((3 * WIDTH) / 4, HEIGHT / 2, 0);
     }
     

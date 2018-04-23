@@ -38,6 +38,7 @@ public class EndGameAppState extends BaseAppState implements ActionListener
             background;
     private float time;
     private String message;
+    private final int TEXT_SIZE;
     
     //Input
     private final String QUIT = "QUIT",
@@ -51,6 +52,7 @@ public class EndGameAppState extends BaseAppState implements ActionListener
         INPUT_MANAGER = Main.getMain().getInputManager();
         WIDTH = Main.getDimensions().width;
         HEIGHT = Main.getDimensions().height;
+        TEXT_SIZE = WIDTH / 96;
     }
     
     @Override
@@ -65,7 +67,7 @@ public class EndGameAppState extends BaseAppState implements ActionListener
     private void initBackgroundImage()
     {
         background = new Picture("Background Picture");
-        background.setImage(ASSET_MANAGER, "Interface/b.png", true);
+        background.setImage(ASSET_MANAGER, "Interface/kingCircleDim.png", true);
         background.setWidth(WIDTH);
         background.setHeight(HEIGHT);
         background.setPosition(0, 0);
@@ -88,9 +90,9 @@ public class EndGameAppState extends BaseAppState implements ActionListener
         bitmapText = new BitmapText(GUI_FONT, false);
         bitmapText.setText(text);
         bitmapText.setSize(GUI_FONT.getCharSet().getRenderedSize());
-        bitmapText.setColor(ColorRGBA.Red);
-        bitmapText.setSize(20);
-        bitmapText.setLocalTranslation(WIDTH / 4, 3 * HEIGHT / 4, 0);
+        bitmapText.setColor(ColorRGBA.Blue);
+        bitmapText.setSize(TEXT_SIZE);
+        bitmapText.setLocalTranslation(WIDTH / 4, HEIGHT / 2, 0);
         GUI_NODE.attachChild(bitmapText);
     }
     

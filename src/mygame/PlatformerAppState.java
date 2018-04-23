@@ -67,6 +67,10 @@ public class PlatformerAppState extends BaseAppState
     
     //Timing
     private float timer = 0;
+    private float damageTimer;
+    private final float DAMAGE_TIMER_GOAL = 15;
+    private boolean canDealTimeDamage = false;
+    private final int TIME_DAMAGE = 10;
     
     //Random
     private final Random GENERATOR = new Random();
@@ -252,6 +256,10 @@ public class PlatformerAppState extends BaseAppState
         {
             b.destroy();
         }
+        for(PlatformEnemy e : ENEMIES)
+        {
+            e.destroy();
+        }
         finishBlock.destroy(); 
     }
 
@@ -299,12 +307,21 @@ public class PlatformerAppState extends BaseAppState
             timer++;
         }
         
+        damageTimer += tpf;
+        if(damageTimer >= DAMAGE_TIMER_GOAL)
+        {
+            canDealTimeDamage = false;
+            PLAYER.modHealth(-TIME_DAMAGE);
+            damageTimer = 0;
+        }
+        
         PLATFORMER.update(tpf);
         
         if(finishBlock != null)
         {
             if(PLATFORMER.getLocation().distance(finishBlock.getLocation()) < 5)
             {
+                PLAYER.modHealth(1000);
                 Main.getMain().resetPlatformerAppState();
             }
         }

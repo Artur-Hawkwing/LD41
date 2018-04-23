@@ -9,7 +9,6 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
-import com.jme3.scene.Spatial;
 import java.util.List;
 
 /**
@@ -26,7 +25,7 @@ public class Player implements ActionListener
     private final int MAX_HEALTH = 100;
     private int health = MAX_HEALTH;
     private float healthTimer = 0,
-            healthTimerGoal = .35f;
+            healthTimerGoal = .4f;
     private boolean canChangeHealth = true;
     
     //Name
@@ -116,7 +115,7 @@ public class Player implements ActionListener
                 health += value;
             }
 
-            if(health < 0)
+            if(health <= 0)
             {
                 Main.getMain().endGame();
             }

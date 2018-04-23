@@ -31,26 +31,33 @@ public class MenuAppState extends BaseAppState implements ActionListener
     private final BitmapFont GUI_FONT;
     private final int WIDTH, 
             HEIGHT;
+    private final int TEXT_SIZE;
     
     //Text
     private final String[] INTRODUCTION = 
     {
-        "You are lying on the ground in sleep. Slowly, you begin to awake from what seems like an eternity of darkness.",
-        "Your enemy! You have finally beaten him! Now you begin to remember...the fight...then something. What put you \n"
-            + "to sleep anyway?",
-        "You promised your subjects you would unite the kingdom and exile Aeoln the Divider. Now he is dead...but why…?",
-        "\"You may unite the kingdom, but you shall not find peace again!\" Those were his last words. Why?",
-        "You open one eye and see your native land of Oiba.",
-        "You open the other eye and see… WHAT???!!!!!",
-        "You close it again. That can’t be right.",
-        "You peak out again. It is still there. Abio, the reverse of your world. Two-dimmensional, devoid of life. You \n"
-            + "see into each realm with your two eyes.",
-        "So who are you? The platformer? The adventurer? The two should never have been forced to unite. But now...you must\n"
-            + " live through the trials of both, or else fall to Aeoln’s final curse.",
-        "You slowly stumble to your feet...twice. After all, you can only move in one world at a time. But if you get hurt in\n"
-            + " one, you somehow know that you will feel the blow in both…",
-        "The realms envelop you, a duality though which you now walk.",
-        "Press Space or Right Arrow to begin..."
+        "You are King Circle, lord of the two-dimensional universe! Unfortunately, you have a lot of enemies who think you are not "
+            + "\nfit for kingship on account of your poor logic. (You see, you were very prone to *circular reasoning*). These enemies have "
+            + "\nconspired to eliminate you by casting you into a third dimension; only your fast reflexes let you *roll* out of the way of "
+            + "\nthe spell. Sadly for you, however, you still feel some *tangential* after effects. You now exist into both dimensions! And "
+            + "\nin both, enemies formed from fire are consumed with a *burning* desire to kill you. In order to live, you will have to draw "
+            + "\nupon your knowledge of shifting between dimensions to stay alive and get *around* the assassination attempt. Can you survive "
+            + "\nthe attack, or will your attempts fall *flat*?",
+        "Controls:\n" + "General:\n" + "\tEsc: Pause\n" + "\tSpace: change games\n" + "Platformer:\n" + "\tA: Backwards\n" + "\tD: Forwards\n" + "\tW: Jump\n" + "\tS: Collect power-ups\n" 
+            + "Shooter:\n" + "\tW: Shoot\n" + "\t[Mouse]: Move view",
+        "Rules:\nHealth is shared between the two games, but all other effects are independent. You lose when you are reduced to 0 "
+            + "\nhealth. Your goal is to survive for as long as you can."
+            + "\n\nPlatformer: Your goal is to get to the final portal, represented by a green tile. Throughout the map are blue "
+            + "\ntiles; these are power ups that apply to the shooter part of the game (They replenish your weapons). When you "
+            + "\ncollect them, their tile disappears. The longer you stay in the realm, the more enemies spawn. You also take "
+            + "\nconstant damage while in the platformer, so more quickly!"
+            + "\n\nShooter: Your goal is to kill all the enemies that spawn. Over time, more and more enemies will come. There are four "
+            + "\ntypes of enemies, some of which grant power-ups when killed:\n"
+            + "\tGreen: these are your basic enemies. They have no special traits. (common)\n"
+            + "\tBlue: these attack much more quickly than any other enemies. (uncommon)\n"
+            + "\tGray: these increase the speed of the platformer when killed (rare)\n"
+            + "\tYellow: these make both you invincible for a time. (very rare)"
+            + "\n\nPress Space to begin!"
     };
     private int currentLoc = 0;
     private BitmapText currentText;
@@ -69,6 +76,7 @@ public class MenuAppState extends BaseAppState implements ActionListener
         INPUT_MANAGER = Main.getMain().getInputManager();
         WIDTH = Main.getDimensions().width;
         HEIGHT = Main.getDimensions().height;
+        TEXT_SIZE = WIDTH / 96;
     }
     
     @Override
@@ -109,7 +117,7 @@ public class MenuAppState extends BaseAppState implements ActionListener
         currentText.setText(text);
         currentText.setSize(GUI_FONT.getCharSet().getRenderedSize());
         currentText.setColor(ColorRGBA.Red);
-        currentText.setSize(20);
+        currentText.setSize(TEXT_SIZE);
         currentText.setLocalTranslation(WIDTH / 4, 3 * HEIGHT / 4, 0);
         GUI_NODE.attachChild(currentText);
     }

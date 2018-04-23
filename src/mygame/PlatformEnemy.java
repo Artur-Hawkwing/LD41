@@ -104,6 +104,12 @@ public class PlatformEnemy
         OPEN_CHARACTER_CONTROL.setWalkDirection(new Vector3f(0, 0, 0));
     }
     
+    public void destroy()
+    {
+        ROOT_NODE.detachChild(enemyNode);
+        BULLET_APP_STATE.getPhysicsSpace().remove(OPEN_CHARACTER_CONTROL);
+    }
+    
     public void setBackward(boolean value)
     {
         backward = value;

@@ -64,11 +64,12 @@ public class PlatformerAppState extends BaseAppState
             STANDARD_BLOCKS = new ArrayList<>();
     private Block finishBlock,
             firstBlock;
+    private int lastLevel = -1;
     
     //Timing
     private float timer = 0;
     private float damageTimer;
-    private final float DAMAGE_TIMER_GOAL = 15;
+    private float damageTimerGoal = 45;
     private boolean canDealTimeDamage = false;
     private final int TIME_DAMAGE = 10;
     
@@ -156,6 +157,7 @@ public class PlatformerAppState extends BaseAppState
         BLOCK_COLOR_MAPPING.put(Color.RED, BlockType.FINISH);
         BLOCK_COLOR_MAPPING.put(Color.BLUE, BlockType.RIGHT_END);
         BLOCK_COLOR_MAPPING.put(Color.GREEN, BlockType.POWER);
+        System.out.println(Color.GREEN);
     }
     
     private void initEnemyColorMappping()
@@ -168,7 +170,12 @@ public class PlatformerAppState extends BaseAppState
         final int LENGTH = 5;
         boolean first = true;
         int level = GENERATOR.nextInt(2) + 1;
-        File file= new File("Assets/Maps/lvl1" /*+ level*/ + ".png");
+        while(level == lastLevel)
+        {
+            level = GENERATOR.nextInt(2) + 1;
+        }
+        lastLevel = level;
+        File file= new File("Assets/Maps/lvl3" /*+ level*/ + ".png");
         try
         {
             BufferedImage image = ImageIO.read(file);
@@ -287,7 +294,7 @@ public class PlatformerAppState extends BaseAppState
         while(it.hasNext())
         {
             Block b = it.next();
-            if(b.getLocation().distance(location) < 20)
+            if(b.getLocation().distance(location) < 10)
             {
                 powerUps.add(PowerUp.ADD_SPEARS);
                 b.destroy();
@@ -308,8 +315,13 @@ public class PlatformerAppState extends BaseAppState
         }
         
         damageTimer += tpf;
-        if(damageTimer >= DAMAGE_TIMER_GOAL)
+        if(damageTimer >= damageTimerGoal)
         {
+            if(damageTimerGoal > 10)
+            {
+                damageTimerGoal = 10;
+            }
+            Main.getMain().playAudio(AudioType.HURT);
             canDealTimeDamage = false;
             PLAYER.modHealth(-TIME_DAMAGE);
             damageTimer = 0;

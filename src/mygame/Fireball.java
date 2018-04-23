@@ -21,7 +21,7 @@ public class Fireball
     private final AssetManager ASSET_MANAGER;
     private final Vector3f START_LOCATION, DIRECTION;
     private static final String NAME = "FIREBALL";
-    private static final int DAMAGE = 10;
+    private static final int DAMAGE = 2;
 
     public Fireball(Node rootNode, Vector3f location, Vector3f target)
     {

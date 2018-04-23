@@ -13,6 +13,7 @@ import com.jme3.font.BitmapText;
 import com.jme3.input.InputManager;
 import com.jme3.math.ColorRGBA;
 import com.jme3.scene.Node;
+import java.text.DecimalFormat;
 
 /**
  *
@@ -36,6 +37,7 @@ public class HUDAppState extends BaseAppState
             HEALTH_TEXT_2, 
             CROSSHAIRS; 
     private final int TEXT_SIZE;
+    private final DecimalFormat DECIMAL_FORMAT;
     
     public HUDAppState(BitmapFont guiFont, Player player)
     {
@@ -51,12 +53,15 @@ public class HUDAppState extends BaseAppState
         CROSSHAIRS = new BitmapText(GUI_FONT, false);
         TEXT_SIZE = WIDTH / 96;
         
+        DECIMAL_FORMAT = new DecimalFormat();
+        DECIMAL_FORMAT.setMaximumFractionDigits(2);
+        
         displayCrossHairs();
     }
     
     private void updateLabels(int health, float time, float speed, int spears)
     {
-        HEALTH_TEXT.setText("Health: " + health + "\nTime: " + (int) time + "\nSpeed: " + speed);
+        HEALTH_TEXT.setText("Health: " + health + "\nTime: " + (int) time + "\nSpeed: " + DECIMAL_FORMAT.format(speed));
         HEALTH_TEXT.setSize(GUI_FONT.getCharSet().getRenderedSize());
         HEALTH_TEXT.setColor(ColorRGBA.Red);
         HEALTH_TEXT.setSize(TEXT_SIZE);

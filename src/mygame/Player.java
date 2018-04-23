@@ -109,6 +109,7 @@ public class Player implements ActionListener
     {
         if(canChangeHealth)
         {
+            Main.getMain().playAudio(AudioType.HURT);
             int newHealthTemp = health + value;
             if(newHealthTemp > MAX_HEALTH)
             {

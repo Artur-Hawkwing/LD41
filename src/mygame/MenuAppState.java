@@ -50,11 +50,11 @@ public class MenuAppState extends BaseAppState implements ActionListener
             + "Shooter:\n" + "\tW: Shoot\n" + "\t[Mouse]: Move view",
         
         "Rules:\nHealth is shared between the two games, but all other effects are independent. You lose when you are reduced to 0 "
-            + "\nhealth. Your goal is to survive for as long as you can."
+            + "\nhealth, and your health is restored when you complete a platformer level. Your goal is to survive for as long as you can."
             + "\n\nPlatformer: Your goal is to get to the final portal, represented by a green tile. Throughout the map are blue "
             + "\ntiles; these are power ups that apply to the shooter part of the game (They replenish your weapons). When you "
             + "\ncollect them, their tile disappears. The longer you stay in the realm, the more enemies spawn. You also take "
-            + "\nconstant damage while in the platformer, so more quickly!"
+            + "\ndamage if you stay too long in one level in the platformer, so more quickly!"
             + "\n\nShooter: Your goal is to kill all the enemies that spawn. Over time, more and more enemies will come. There are four "
             + "\ntypes of enemies, some of which grant power-ups when killed:\n"
             + "\tGreen: these are your basic enemies. They have no special traits. (common)\n"

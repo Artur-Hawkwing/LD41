@@ -62,8 +62,8 @@ public class RPGAppState extends BaseAppState
    
     //Enemies
     private final List<RPGEnemy> ENEMIES = new ArrayList<>();
-    private final float FAST_SPAWN_CHANGE = .2f,
-           POWER_SPEED_SPAWN_CHANCE = .1f,
+    private final float FAST_SPAWN_CHANGE = .1f,
+           POWER_SPEED_SPAWN_CHANCE = .2f,
            POWER_INVINCIBLE_SPAWN_CHANCE = .05f;
     private float spawnTimer,
            spawnTimerGoal = 10;
@@ -222,7 +222,7 @@ public class RPGAppState extends BaseAppState
         if(canSpawn)
         {
             waveNum++;
-            if(waveNum % 3 == 0 && enemiesToSpawn < 10)
+            if(waveNum % 15 == 0 && enemiesToSpawn < 10)
             {
                 enemiesToSpawn++;
                 spawnTimerGoal = enemiesToSpawn + 1;
@@ -245,17 +245,21 @@ public class RPGAppState extends BaseAppState
             //Random Enemy Type
             float f = GENERATOR.nextFloat();
             RPGEnemyType type;
-            if(f < POWER_INVINCIBLE_SPAWN_CHANCE)
+            float cutoff = 0;
+            if(f >= cutoff && f < cutoff + POWER_INVINCIBLE_SPAWN_CHANCE)
             {
                 type = RPGEnemyType.POWER_INVINCIBLE;
+                cutoff += POWER_INVINCIBLE_SPAWN_CHANCE;
             }
-            else if(f < POWER_SPEED_SPAWN_CHANCE)
+            else if(f >= cutoff && f < cutoff + POWER_SPEED_SPAWN_CHANCE)
             {
                 type = RPGEnemyType.POWER_SPEED;
+                cutoff += POWER_SPEED_SPAWN_CHANCE;
             }
-            else if(f < FAST_SPAWN_CHANGE)
+            else if(f >= cutoff && f < cutoff + FAST_SPAWN_CHANGE)
             {
                 type = RPGEnemyType.FAST;
+                cutoff += FAST_SPAWN_CHANGE;
             }
             else
             {

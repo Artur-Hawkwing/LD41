@@ -36,7 +36,7 @@ public class Platformer
     private final float RADIUS = 1,
             HEIGHT = 2,
             MASS = 5;
-    private final Vector3f JUMP_FORCE = new Vector3f(0, 50, 0);
+    private final Vector3f JUMP_FORCE = new Vector3f(0, 60, 0);
     private Vector3f spawn;
     
     //Motion
@@ -48,7 +48,7 @@ public class Platformer
     
     //Health
     private float healthTimer = 0,
-            healthTimerGoal = .35f;
+            healthTimerGoal = 1f;
     private boolean canChangeHealth = true;
         
     public Platformer(Player player)
@@ -94,7 +94,7 @@ public class Platformer
         
         if(camera != null)
         {
-            camera.setLocation(new Vector3f(location.x, 20, -100));
+            camera.setLocation(new Vector3f(location.x, location.y + 20, -100));
             camera.lookAt(location.add(new Vector3f(0, 30,  0)), Main.getUpVector());
             LISTENER.setLocation(camera.getLocation());
             LISTENER.setRotation(camera.getRotation());
@@ -161,15 +161,10 @@ public class Platformer
     {
         if(canChangeHealth)
         {
-            if(value < 0)
-            {
-                Main.getMain().playAudio(AudioType.HURT);
-            }
-                    
             PLAYER.modHealth(value);
             canChangeHealth = false;
             healthTimer = 0;
-            modSpeed(-.3f);
+            modSpeed(-.1f);
         }
     }
     

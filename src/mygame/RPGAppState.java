@@ -222,7 +222,7 @@ public class RPGAppState extends BaseAppState
         if(canSpawn)
         {
             waveNum++;
-            if(waveNum % 15 == 0 && enemiesToSpawn < 10)
+            if(waveNum % 5 == 0 && enemiesToSpawn < 5)
             {
                 enemiesToSpawn++;
                 spawnTimerGoal = enemiesToSpawn + 1;

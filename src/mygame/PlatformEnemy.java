@@ -99,6 +99,11 @@ public class PlatformEnemy
         OPEN_CHARACTER_CONTROL.setWalkDirection(walkDirection);
     }
     
+    public void stop()
+    {
+        OPEN_CHARACTER_CONTROL.setWalkDirection(new Vector3f(0, 0, 0));
+    }
+    
     public void setBackward(boolean value)
     {
         backward = value;

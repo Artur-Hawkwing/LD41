@@ -11,6 +11,15 @@ package mygame;
  */
 public enum PowerUp 
 {
+    NONE
+    {
+        @Override
+        public float getValue()
+        {
+            return 0;
+        }
+    },
+    
     ADD_SPEARS
     {
         @Override
@@ -26,6 +35,15 @@ public enum PowerUp
         public float getValue()
         {
             return .1f;
+        }
+    },
+    
+    INVINCIBILITY
+    {
+        @Override
+        public float getValue()
+        {
+            return 10f;
         }
     };
     

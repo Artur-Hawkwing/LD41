@@ -170,6 +170,10 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     public void simpleUpdate(float tpf) 
     {
         timer += tpf;
+        if(running)
+        {
+            player.update(tpf);
+        }
     }
 
     @Override

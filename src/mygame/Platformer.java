@@ -8,6 +8,7 @@ package mygame;
 import com.jme3.asset.AssetManager;
 import com.jme3.audio.Listener;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 import com.jme3.scene.Node;
@@ -27,7 +28,7 @@ public class Platformer
     private final Listener LISTENER;
     private Spatial model;
     private Camera camera;
-    private final String MODEL_PATH = "Models/spherev1/spherev1.j3o",
+    private final String MODEL_PATH = "Models/player/player.j3o",
             NAME;
     
     //Physics Data
@@ -42,7 +43,8 @@ public class Platformer
     private boolean forward,
             backward;
     private final int SPEED = 1500;
-    private float speedFactor = 1f;
+    private final float MIN_SPEED = .5f, MAX_SPEED = 1.5f;
+    private float speedFactor = MIN_SPEED;
     
     //Health
     private float healthTimer = 0,
@@ -64,6 +66,8 @@ public class Platformer
     private void initPhysics()
     {
         model = ASSET_MANAGER.loadModel(MODEL_PATH);
+        model.rotate(0, FastMath.PI / 2
+                , 0);
         model.setName(NAME);
         ROOT_NODE.attachChild(model);
         model.addControl(OPEN_CHARACTER_CONTROL);
@@ -156,12 +160,21 @@ public class Platformer
             PLAYER.modHealth(value);
             canChangeHealth = false;
             healthTimer = 0;
+            modSpeed(-.3f);
         }
     }
     
     public void modSpeed(float value)
     {
-        speedFactor += .1f;
+        speedFactor += value;
+        if(speedFactor < MIN_SPEED)
+        {
+            speedFactor = MIN_SPEED;
+        }
+        else if(speedFactor > MAX_SPEED)
+        {
+            speedFactor = MAX_SPEED;
+        }
     }
     
     public void stop()

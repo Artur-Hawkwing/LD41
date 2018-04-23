@@ -87,7 +87,7 @@ public class RPGAppState extends BaseAppState
         initDimming();
         initMap();
         initAdventurer();
-        ENMEIES.add(new RPGEnemy(ROOT_NODE, ADVENTURER.getLocation().add(new Vector3f(10, 0, 10)), RPGEnemyType.COMMON));
+        ENMEIES.add(new RPGEnemy(ROOT_NODE, ADVENTURER.getLocation().add(new Vector3f(10, 0, 10)), RPGEnemyType.POWER_INVINCIBLE));
     }
     
     private void initCamera()
@@ -206,7 +206,6 @@ public class RPGAppState extends BaseAppState
     
     public void collision(Spatial a, Spatial b)
     {
-        
         if(a.getName().startsWith(RPGEnemy.getPrefix()) && b.getName().equals(Spear.getName()))
         {
             ListIterator<RPGEnemy> it = ENMEIES.listIterator();
@@ -215,14 +214,7 @@ public class RPGAppState extends BaseAppState
                 RPGEnemy e = it.next();
                 if(e.getName().equals(a.getName()))
                 {
-                    switch(e.getEnemyType())
-                    {
-                        case SPECIAL:
-                        {
-                            PLAYER.addPowerUp(e.getEnemyType().getPowerUp());
-                        }
-                        break;
-                    }
+                    PLAYER.addPowerUp(e.getEnemyType().getPowerUp());
                     e.destroy();
                     it.remove();
                 }
@@ -237,14 +229,7 @@ public class RPGAppState extends BaseAppState
                 RPGEnemy e = it.next();
                 if(e.getName().equals(b.getName()))
                 {
-                    switch(e.getEnemyType())
-                    {
-                        case SPECIAL:
-                        {
-                            PLAYER.addPowerUp(e.getEnemyType().getPowerUp());
-                        }
-                        break;
-                    }
+                    PLAYER.addPowerUp(e.getEnemyType().getPowerUp());
                     e.destroy();
                     it.remove();
                 }

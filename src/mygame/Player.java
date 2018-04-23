@@ -25,6 +25,9 @@ public class Player implements ActionListener
     //Data common to all forms of the character
     private final int MAX_HEALTH = 100;
     private int health = MAX_HEALTH;
+    private float healthTimer = 0,
+            healthTimerGoal = .35f;
+    private boolean canChangeHealth = true;
     
     //Name
     private final String BASE_NAME = "Player";
@@ -35,7 +38,7 @@ public class Player implements ActionListener
             A = "A",
             S = "S",
             D = "D";
-    
+
     public Player()
     {
         PLATFORMER = new Platformer(this);
@@ -71,6 +74,23 @@ public class Player implements ActionListener
                 PLATFORMER.modSpeed(PowerUp.ADD_SPEED.getValue());
             }
             break;
+            case INVINCIBILITY:
+            {
+                canChangeHealth = false;
+                System.out.println(true);
+                healthTimer = 0;
+                healthTimerGoal = PowerUp.INVINCIBILITY.getValue();
+            }
+            break;
+        }
+    }
+    
+    public void update(float tpf)
+    {
+        healthTimer += tpf;
+        if(healthTimer > healthTimerGoal)
+        {
+            canChangeHealth = true;
         }
     }
     
@@ -84,19 +104,22 @@ public class Player implements ActionListener
     
     public void modHealth(int value)
     {
-        int newHealthTemp = health + value;
-        if(newHealthTemp > MAX_HEALTH)
+        if(canChangeHealth)
         {
-            health = MAX_HEALTH;
-        }
-        else
-        {
-            health += value;
-        }
-        
-        if(health < 0)
-        {
-            Main.getMain().endGame();
+            int newHealthTemp = health + value;
+            if(newHealthTemp > MAX_HEALTH)
+            {
+                health = MAX_HEALTH;
+            }
+            else
+            {
+                health += value;
+            }
+
+            if(health < 0)
+            {
+                Main.getMain().endGame();
+            }
         }
     }
     

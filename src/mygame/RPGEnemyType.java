@@ -18,7 +18,7 @@ public enum RPGEnemyType
         @Override
         public PowerUp getPowerUp()
         {
-            return PowerUp.ADD_SPEED;
+            return PowerUp.NONE;
         }
         
         @Override
@@ -39,12 +39,13 @@ public enum RPGEnemyType
             return ColorRGBA.Black;
         }
     },
+    
     FAST
     {
         @Override
         public PowerUp getPowerUp()
         {
-            return PowerUp.ADD_SPEED;
+            return PowerUp.NONE;
         }
         
         @Override
@@ -65,7 +66,8 @@ public enum RPGEnemyType
             return ColorRGBA.Black;
         }
     },
-    SPECIAL
+    
+    POWER_SPEED
             {
         @Override
         public PowerUp getPowerUp()
@@ -89,6 +91,33 @@ public enum RPGEnemyType
         public ColorRGBA getEndColor()
         {
             return ColorRGBA.LightGray;
+        }
+    },
+    
+   POWER_INVINCIBLE
+    {
+        @Override
+        public PowerUp getPowerUp()
+        {
+            return PowerUp.INVINCIBILITY;
+        }
+        
+        @Override
+        public float getSize()
+        {
+            return 2;
+        }
+        
+        @Override
+        public ColorRGBA getStartColor()
+        {
+            return ColorRGBA.Yellow;
+        }
+        
+        @Override
+        public ColorRGBA getEndColor()
+        {
+            return ColorRGBA.Black;
         }
     };
     

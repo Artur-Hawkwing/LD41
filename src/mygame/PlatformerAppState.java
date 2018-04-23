@@ -266,6 +266,10 @@ public class PlatformerAppState extends BaseAppState
     {
         GUI_NODE.attachChild(BLACKNESS);
         PLATFORMER.stop();
+        for(PlatformEnemy e : ENEMIES)
+        {
+            e.stop();
+        }
     }
     
     public List<PowerUp> collectPowerUps(Vector3f location)

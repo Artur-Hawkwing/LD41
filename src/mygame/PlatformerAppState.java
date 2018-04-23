@@ -64,12 +64,13 @@ public class PlatformerAppState extends BaseAppState
             STANDARD_BLOCKS = new ArrayList<>();
     private Block finishBlock,
             firstBlock;
-    private int lastLevel = -1;
+    private File lastLevel = null;
     
     //Timing
     private float timer = 0;
     private float damageTimer;
-    private float damageTimerGoal = 45;
+    private final float BASE_DAMAGE_TIMER_GOAL = 45;
+    private float damageTimerGoal = BASE_DAMAGE_TIMER_GOAL;
     private boolean canDealTimeDamage = false;
     private final int TIME_DAMAGE = 10;
     
@@ -169,13 +170,13 @@ public class PlatformerAppState extends BaseAppState
     {
         final int LENGTH = 5;
         boolean first = true;
-        int level = GENERATOR.nextInt(2) + 1;
-        while(level == lastLevel)
+        File[] maps = new File("Assets/Maps/").listFiles();
+        File file = maps[GENERATOR.nextInt(maps.length)];
+        while(file.equals(lastLevel) && maps.length > 1)
         {
-            level = GENERATOR.nextInt(2) + 1;
+            file = maps[GENERATOR.nextInt(maps.length)];
         }
-        lastLevel = level;
-        File file= new File("Assets/Maps/lvl3" /*+ level*/ + ".png");
+        lastLevel = file;
         try
         {
             BufferedImage image = ImageIO.read(file);
@@ -336,6 +337,7 @@ public class PlatformerAppState extends BaseAppState
                 PLAYER.modHealth(1000);
                 Main.getMain().playAudio(AudioType.NEXT_LEVEL);
                 Main.getMain().resetPlatformerAppState();
+                damageTimerGoal = BASE_DAMAGE_TIMER_GOAL;
             }
         }
         

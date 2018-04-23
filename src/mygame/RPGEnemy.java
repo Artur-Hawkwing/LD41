@@ -29,7 +29,7 @@ public class RPGEnemy
     private final Node ROOT_NODE;
     private final BulletAppState BULLET_APP_STATE;
     private final Vector3f LOCATION;
-    private static final String PREFIX = Main.getMain().getRPGPrefix()+ "ENEMY";
+    private static final String PREFIX = Main.getMain().getRPGPrefix()+ "ENEMY_";
     private final String NAME;
     private final RPGEnemyType TYPE;
     private static int ID = 0;

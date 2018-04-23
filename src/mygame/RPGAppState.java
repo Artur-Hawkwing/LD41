@@ -206,7 +206,8 @@ public class RPGAppState extends BaseAppState
     
     public void collision(Spatial a, Spatial b)
     {
-        if(a.getName().startsWith(RPGEnemy.getPrefix()) && b.getName().equals(Fireball.getName()))
+        
+        if(a.getName().startsWith(RPGEnemy.getPrefix()) && b.getName().equals(Spear.getName()))
         {
             ListIterator<RPGEnemy> it = ENMEIES.listIterator();
             while(it.hasNext())
@@ -222,13 +223,13 @@ public class RPGAppState extends BaseAppState
                         }
                         break;
                     }
+                    e.destroy();
                     it.remove();
                 }
-                
             }
         }
         
-        else if(b.getName().startsWith(RPGEnemy.getPrefix()) && a.getName().equals(Fireball.getName()))
+        else if(b.getName().startsWith(RPGEnemy.getPrefix()) && a.getName().equals(Spear.getName()))
         {
             ListIterator<RPGEnemy> it = ENMEIES.listIterator();
             while(it.hasNext())
@@ -244,9 +245,9 @@ public class RPGAppState extends BaseAppState
                         }
                         break;
                     }
+                    e.destroy();
                     it.remove();
                 }
-                
             }
         }
     }

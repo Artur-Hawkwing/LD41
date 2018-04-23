@@ -340,8 +340,6 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         Spatial a = event.getNodeA();
         Spatial b = event.getNodeB();
         
-        
-        
         if(a.getName().startsWith(PLATFORM_PREFIX) || b.getName().startsWith(PLATFORM_PREFIX))
         {
             platformerAppState.collision(a, b);

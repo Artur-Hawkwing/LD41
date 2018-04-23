@@ -3,13 +3,8 @@ package mygame;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.SphereCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
-import com.jme3.effect.ParticleEmitter;
-import com.jme3.effect.ParticleMesh;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
@@ -24,7 +19,7 @@ public class Spear
     private final BulletAppState BULLET_APP_STATE;
     private final AssetManager ASSET_MANAGER;
     private final Vector3f START_LOCATION, DIRECTION;
-    private static final String NAME = Main.getMain().getRPGPrefix() + "FIREBALL";
+    private static final String NAME = Main.getMain().getRPGPrefix() + "SPEAR";
     private RigidBodyControl spearControl;
     
     public Spear(Node rootNode, Vector3f location, Vector3f direction)

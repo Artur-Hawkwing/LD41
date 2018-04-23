@@ -210,7 +210,7 @@ public class PlatformerAppState extends BaseAppState
                     }
                     else if(enemyType != null)
                     {
-                        ENEMIES.add(new PlatformEnemy(ROOT_NODE, new Vector3f((image.getWidth() - x) * LENGTH, (image.getHeight() - y), 0).add(OFFSET).add(new Vector3f(0, 5, 0)), enemyType));
+                        ENEMIES.add(new PlatformEnemy(ROOT_NODE, new Vector3f((image.getWidth() - x) * (2 * LENGTH), (image.getHeight() - y), 0).add(OFFSET).add(new Vector3f(0, 5, 0)), enemyType));
                     }
                 }
             }
@@ -230,7 +230,6 @@ public class PlatformerAppState extends BaseAppState
 
         PlatformEnemy e = new PlatformEnemy(ROOT_NODE, new Vector3f(x, y, 0), PlatformEnemyType.SPIKEBALL);
         ENEMIES.add(e);
-        System.out.println(e.getLocation());
     }
 
     @Override
@@ -321,7 +320,6 @@ public class PlatformerAppState extends BaseAppState
             {
                 if(a.getName().equals(e.getName()))
                 {
-                    System.out.println(2);
                     PLATFORMER.modHealth(-e.getEnemyType().getDamage());
                 }
             }
@@ -332,7 +330,6 @@ public class PlatformerAppState extends BaseAppState
             {
                 if(b.getName().equals(e.getName()))
                 {
-                    System.out.println(2);
                     PLATFORMER.modHealth(-e.getEnemyType().getDamage());
                 }
             }

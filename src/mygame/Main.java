@@ -283,6 +283,11 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         return SCREEN_SIZE;
     }
     
+    public Player getPlayer()
+    {
+        return player;
+    }
+    
     public static Main getMain()
     {
         return MAIN;

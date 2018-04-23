@@ -38,6 +38,12 @@ public enum RPGEnemyType
         {
             return ColorRGBA.Black;
         }
+        
+        @Override
+        public float getAttackDelay()
+        {
+            return 5;
+        }
     },
     
     FAST
@@ -64,6 +70,12 @@ public enum RPGEnemyType
         public ColorRGBA getEndColor()
         {
             return ColorRGBA.Black;
+        }
+        
+        @Override
+        public float getAttackDelay()
+        {
+            return 2;
         }
     },
     
@@ -92,6 +104,12 @@ public enum RPGEnemyType
         {
             return ColorRGBA.LightGray;
         }
+        
+        @Override
+        public float getAttackDelay()
+        {
+            return 5;
+        }
     },
     
    POWER_INVINCIBLE
@@ -119,10 +137,17 @@ public enum RPGEnemyType
         {
             return ColorRGBA.Black;
         }
+        
+        @Override
+        public float getAttackDelay()
+        {
+            return 5;
+        }
     };
     
     public abstract PowerUp getPowerUp();
     public abstract float getSize();
     public abstract ColorRGBA getStartColor();
     public abstract ColorRGBA getEndColor();
+    public abstract float getAttackDelay();
 }

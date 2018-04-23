@@ -31,6 +31,7 @@ import com.jme3.ui.Picture;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Random;
 
 /**
  *
@@ -57,10 +58,21 @@ public class RPGAppState extends BaseAppState
     private final int FUSTRUM_FAR = 6000;
     
     //Map Data
-   private TerrainQuad terrain;
+    private TerrainQuad terrain;
    
-   //Enemies
-   private final List<RPGEnemy> ENMEIES = new ArrayList<>();
+    //Enemies
+    private final List<RPGEnemy> ENEMIES = new ArrayList<>();
+    private final float FAST_SPAWN_CHANGE = .2f,
+           POWER_SPEED_SPAWN_CHANCE = .1f,
+           POWER_INVINCIBLE_SPAWN_CHANCE = .05f;
+    private float spawnTimer,
+           spawnTimerGoal = 10;
+    private boolean canSpawn = true;
+    private int enemiesToSpawn = 3,
+            waveNum;
+   
+    //Random
+    private final Random GENERATOR = new Random();
 
     public RPGAppState(Camera camera, ViewPort viewPort, FlyByCamera flyCam, Player player, String prefix)
     {
@@ -87,7 +99,6 @@ public class RPGAppState extends BaseAppState
         initDimming();
         initMap();
         initAdventurer();
-        ENMEIES.add(new RPGEnemy(ROOT_NODE, ADVENTURER.getLocation().add(new Vector3f(10, 0, 10)), RPGEnemyType.POWER_INVINCIBLE));
     }
     
     private void initCamera()
@@ -132,9 +143,8 @@ public class RPGAppState extends BaseAppState
         mat_terrain.setFloat("Tex3Scale", 128f);
 
         /** 2. Create the height map */
-        AbstractHeightMap heightmap = null;
         Texture heightMapImage = ASSET_MANAGER.loadTexture("Textures/heightMapv1.png");
-        heightmap = new ImageBasedHeightMap(heightMapImage.getImage());
+        AbstractHeightMap heightmap = new ImageBasedHeightMap(heightMapImage.getImage());
         heightmap.load();
 
         int patchSize = 65;
@@ -202,13 +212,68 @@ public class RPGAppState extends BaseAppState
     public void update(float tpf)
     {
         ADVENTURER.update(tpf);
+
+        spawnTimer += tpf;
+        if(spawnTimer >= spawnTimerGoal)
+        {
+            canSpawn = true;
+        }
+
+        if(canSpawn)
+        {
+            waveNum++;
+            if(waveNum % 3 == 0 && enemiesToSpawn < 10)
+            {
+                enemiesToSpawn++;
+                spawnTimerGoal = enemiesToSpawn + 1;
+            }
+            spawnEnemies(enemiesToSpawn);
+            canSpawn = false;
+            spawnTimer = 0;
+        }
+        
+        for(RPGEnemy e : ENEMIES)
+        {
+            e.update(tpf);
+        }
+    }
+    
+    private void spawnEnemies(int num)
+    {
+        for(int i = 0; i < num; i++)
+        {
+            //Random Enemy Type
+            float f = GENERATOR.nextFloat();
+            RPGEnemyType type;
+            if(f < POWER_INVINCIBLE_SPAWN_CHANCE)
+            {
+                type = RPGEnemyType.POWER_INVINCIBLE;
+            }
+            else if(f < POWER_SPEED_SPAWN_CHANCE)
+            {
+                type = RPGEnemyType.POWER_SPEED;
+            }
+            else if(f < FAST_SPAWN_CHANGE)
+            {
+                type = RPGEnemyType.FAST;
+            }
+            else
+            {
+                type = RPGEnemyType.COMMON;
+            }
+            
+            //Random Location
+            Vector3f loc = new Vector3f(GENERATOR.nextInt(100) - 50, GENERATOR.nextInt(50), GENERATOR.nextInt(100) - 50);
+            ENEMIES.add(new RPGEnemy(ROOT_NODE, ADVENTURER.getLocation().add(loc), type));
+        }
     }
     
     public void collision(Spatial a, Spatial b)
-    {
+    {        
+        //Killing enemies
         if(a.getName().startsWith(RPGEnemy.getPrefix()) && b.getName().equals(Spear.getName()))
         {
-            ListIterator<RPGEnemy> it = ENMEIES.listIterator();
+            ListIterator<RPGEnemy> it = ENEMIES.listIterator();
             while(it.hasNext())
             {
                 RPGEnemy e = it.next();
@@ -220,10 +285,9 @@ public class RPGAppState extends BaseAppState
                 }
             }
         }
-        
         else if(b.getName().startsWith(RPGEnemy.getPrefix()) && a.getName().equals(Spear.getName()))
         {
-            ListIterator<RPGEnemy> it = ENMEIES.listIterator();
+            ListIterator<RPGEnemy> it = ENEMIES.listIterator();
             while(it.hasNext())
             {
                 RPGEnemy e = it.next();

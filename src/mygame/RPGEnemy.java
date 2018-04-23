@@ -37,7 +37,12 @@ public class RPGEnemy
     
     //Motion
     private final Random GENERATOR = new Random();
-    private boolean backward;
+    
+    //Attacks
+    private float attackTimer;
+    private final float ATTACK_TIMER_GOAL;
+    private boolean canAttack = false;
+    private Fireball fireball;
     
     public RPGEnemy(Node rootNode, Vector3f location, RPGEnemyType type)
     {
@@ -47,7 +52,9 @@ public class RPGEnemy
         NAME = PREFIX + type.name() + ID;
         BULLET_APP_STATE = Main.getMain().getBulletAppState();
         ASSET_MANAGER = Main.getMain().getAssetManager();
-        backward = GENERATOR.nextBoolean();
+        
+        attackTimer = GENERATOR.nextInt(5) - 2;
+        ATTACK_TIMER_GOAL = type.getAttackDelay();
         ID++;
         
         loadModel();
@@ -90,7 +97,24 @@ public class RPGEnemy
     
     public void update(float tpf)
     {
+        attackTimer += tpf;
+        if(attackTimer >= ATTACK_TIMER_GOAL)
+        {
+            canAttack = true;
+            if(fireball != null)
+            {
+                fireball.destroy();
+            }
+        }
         
+        if(canAttack)
+        {
+            Adventurer a = Main.getMain().getPlayer().getAdventurer();
+            fireball = new Fireball(ROOT_NODE, getLocation(), a.getLocation());
+            a.modHealth(-Fireball.getDamage());
+            canAttack = false;
+            attackTimer = 0;
+        }
     }
 
     public static String getPrefix()
@@ -110,6 +134,10 @@ public class RPGEnemy
     
     public void destroy()
     {
+        if(fireball != null)
+        {
+            fireball.destroy();
+        }
         ROOT_NODE.detachChild(enemyNode);
         BULLET_APP_STATE.getPhysicsSpace().remove(enemyControl);
     }

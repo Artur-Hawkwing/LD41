@@ -21,6 +21,7 @@ public class Fireball
     private final AssetManager ASSET_MANAGER;
     private final Vector3f START_LOCATION, DIRECTION;
     private static final String NAME = "FIREBALL";
+    private static final int DAMAGE = 10;
 
     public Fireball(Node rootNode, Vector3f location, Vector3f target)
     {
@@ -64,6 +65,11 @@ public class Fireball
         fire.addControl(fireControl);
         BULLET_APP_STATE.getPhysicsSpace().add(fireControl);
         fireControl.setLinearVelocity(DIRECTION.normalizeLocal().mult(250));
+    }
+    
+    public static int getDamage()
+    {
+        return DAMAGE;
     }
 
     public void destroy()

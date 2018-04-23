@@ -47,7 +47,7 @@ public class Adventurer
     
     //Health
     private float spearTimer = 0;
-    private final float SPEAR_DELAY = .35f;
+    private final float SPEAR_DELAY = .25f;
     private boolean canThrowSpear = true;
     
     //Attacks

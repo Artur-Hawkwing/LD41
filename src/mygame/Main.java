@@ -1,6 +1,7 @@
 package mygame;
 
 import com.jme3.app.SimpleApplication;
+import com.jme3.audio.AudioNode;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.PhysicsCollisionEvent;
 import com.jme3.bullet.collision.PhysicsCollisionListener;
@@ -59,6 +60,20 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     //Timing
     private float timer = 0;
     
+    //Audio
+    private AudioNode spearAudio,
+            fireballAudio,
+            powerUpAudio,
+            hurtAudio,
+            nextLevelAudio,
+            jumpAudio;
+    private boolean playSpearAudio,
+            playFireballAudio,
+            playPowerUpAudio,
+            playHurtAudio,
+            playNextLevelAudio,
+            playJumpAudio;
+    
     public static void main(String[] args) 
     {
         initSettings();
@@ -83,6 +98,7 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         initViewPorts();
         initPhysics();
         initPlayer();
+        initAudio();
         initAppStates();
         initInput();
         loadMenu();
@@ -112,6 +128,45 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
     private void initPlayer()
     {
         player = new Player();
+    }
+    
+    private void initAudio()
+    {
+        spearAudio = new AudioNode(assetManager, "Sounds/spear.wav", false);
+        spearAudio.setPositional(false);
+        spearAudio.setLooping(false);
+        spearAudio.setVolume(4);
+        rootNode.attachChild(spearAudio);
+
+        powerUpAudio = new AudioNode(assetManager, "Sounds/powerup.wav", false);
+        powerUpAudio.setPositional(false);
+        powerUpAudio.setLooping(false);
+        powerUpAudio.setVolume(4);
+        rootNode.attachChild(powerUpAudio);
+
+        fireballAudio = new AudioNode(assetManager, "Sounds/fireball.wav", false);
+        fireballAudio.setPositional(false);
+        fireballAudio.setLooping(false);
+        fireballAudio.setVolume(4);
+        rootNode.attachChild(fireballAudio);
+        
+        nextLevelAudio = new AudioNode(assetManager, "Sounds/nextlevel.wav", false);
+        nextLevelAudio.setPositional(false);
+        nextLevelAudio.setLooping(false);
+        nextLevelAudio.setVolume(4);
+        rootNode.attachChild(nextLevelAudio);
+
+        jumpAudio = new AudioNode(assetManager, "Sounds/jump.wav", false);
+        jumpAudio.setPositional(false);
+        jumpAudio.setLooping(false);
+        jumpAudio.setVolume(4);
+        rootNode.attachChild(jumpAudio);
+
+        hurtAudio = new AudioNode(assetManager, "Sounds/hurt.wav", false);
+        hurtAudio.setPositional(false);
+        hurtAudio.setLooping(false);
+        hurtAudio.setVolume(4);
+        rootNode.attachChild(hurtAudio);
     }
     
     private void initAppStates()
@@ -173,6 +228,37 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         if(running)
         {
             player.update(tpf);
+        }
+        
+        if(playSpearAudio)
+        {
+            spearAudio.playInstance();
+            playSpearAudio = false;
+        }
+        if(playFireballAudio)
+        {
+            fireballAudio.playInstance();
+            playFireballAudio = false;
+        }
+        if(playPowerUpAudio)
+        {
+            powerUpAudio.playInstance();
+            playPowerUpAudio = false;
+        }
+        if(playHurtAudio)
+        {
+            hurtAudio.playInstance();
+            playHurtAudio = false;
+        }
+        if(playNextLevelAudio)
+        {
+            nextLevelAudio.playInstance();
+            playNextLevelAudio = false;
+        }
+        if(playJumpAudio)
+        {
+            jumpAudio.playInstance();
+            playJumpAudio = false;
         }
     }
 
@@ -245,6 +331,43 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
             }
         }
         running = !running;
+    }
+    
+    public void playAudio(AudioType type)
+    {
+        switch(type)
+        {
+            case FIREBALL:
+            {
+                playFireballAudio = true;
+            }
+            break;
+            case SPEAR:
+            {
+                playSpearAudio = true;
+            }
+            break;
+            case POWERUP:
+            {
+                playPowerUpAudio = true;
+            }
+            break;
+            case NEXT_LEVEL:
+            {
+                playNextLevelAudio = true;
+            }
+            break;
+            case HURT:
+            {
+                playHurtAudio = true;
+            }
+            break;
+            case JUMP:
+            {
+                playJumpAudio = true;
+            }
+            break;
+        }
     }
     
     public void resetPlatformerAppState()
@@ -349,13 +472,17 @@ public class Main extends SimpleApplication implements ActionListener, PhysicsCo
         Spatial a = event.getNodeA();
         Spatial b = event.getNodeB();
         
-        if(a.getName().startsWith(PLATFORM_PREFIX) || b.getName().startsWith(PLATFORM_PREFIX))
+        try
         {
-            platformerAppState.collision(a, b);
+            if(a.getName().startsWith(PLATFORM_PREFIX) || b.getName().startsWith(PLATFORM_PREFIX))
+            {
+                platformerAppState.collision(a, b);
+            }
+            else
+            {
+                rpgAppState.collision(a, b);
+            }
         }
-        else
-        {
-            rpgAppState.collision(a, b);
-        }
+        catch(Exception e){}
     }
 }

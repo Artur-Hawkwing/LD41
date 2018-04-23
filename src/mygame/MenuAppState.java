@@ -36,6 +36,8 @@ public class MenuAppState extends BaseAppState implements ActionListener
     //Text
     private final String[] INTRODUCTION = 
     {
+        "",
+        
         "You are King Circle, lord of the two-dimensional universe! Unfortunately, you have a lot of enemies who think you are not "
             + "\nfit for kingship on account of your poor logic. (You see, you were very prone to *circular reasoning*). These enemies have "
             + "\nconspired to eliminate you by casting you into a third dimension; only your fast reflexes let you *roll* out of the way of "
@@ -43,8 +45,10 @@ public class MenuAppState extends BaseAppState implements ActionListener
             + "\nin both, enemies formed from fire are consumed with a *burning* desire to kill you. In order to live, you will have to draw "
             + "\nupon your knowledge of shifting between dimensions to stay alive and get *around* the assassination attempt. Can you survive "
             + "\nthe attack, or will your attempts fall *flat*?",
+        
         "Controls:\n" + "General:\n" + "\tEsc: Pause\n" + "\tSpace: change games\n" + "Platformer:\n" + "\tA: Backwards\n" + "\tD: Forwards\n" + "\tW: Jump\n" + "\tS: Collect power-ups\n" 
             + "Shooter:\n" + "\tW: Shoot\n" + "\t[Mouse]: Move view",
+        
         "Rules:\nHealth is shared between the two games, but all other effects are independent. You lose when you are reduced to 0 "
             + "\nhealth. Your goal is to survive for as long as you can."
             + "\n\nPlatformer: Your goal is to get to the final portal, represented by a green tile. Throughout the map are blue "
@@ -82,6 +86,7 @@ public class MenuAppState extends BaseAppState implements ActionListener
     @Override
     protected void initialize(Application app) 
     {
+        initMainScreen();
         initBackgroundImage();
         displayText(INTRODUCTION[currentLoc]);
         initInput();
@@ -89,22 +94,21 @@ public class MenuAppState extends BaseAppState implements ActionListener
     
     private void initMainScreen()
     {
-        /*mainScreen = new Picture("Main Picture");
-        mainScreen.setImage(ASSET_MANAGER, "Interface/b.png", true);
+        mainScreen = new Picture("Main Picture");
+        mainScreen.setImage(ASSET_MANAGER, "Interface/kingCircle.png", true);
         mainScreen.setWidth(WIDTH);
         mainScreen.setHeight(HEIGHT);
         mainScreen.setPosition(0, 0);
-        GUI_NODE.attachChild(mainScreen);*/
+        GUI_NODE.attachChild(mainScreen);
     }
     
     private void initBackgroundImage()
     {
         background = new Picture("Background Picture");
-        background.setImage(ASSET_MANAGER, "Interface/b.png", true);
+        background.setImage(ASSET_MANAGER, "Interface/kingCircleDim.png", true);
         background.setWidth(WIDTH);
         background.setHeight(HEIGHT);
         background.setPosition(0, 0);
-        GUI_NODE.attachChild(background);
     }
     
     private void displayText(String text)
@@ -116,7 +120,7 @@ public class MenuAppState extends BaseAppState implements ActionListener
         currentText = new BitmapText(GUI_FONT, false);
         currentText.setText(text);
         currentText.setSize(GUI_FONT.getCharSet().getRenderedSize());
-        currentText.setColor(ColorRGBA.Red);
+        currentText.setColor(ColorRGBA.Blue);
         currentText.setSize(TEXT_SIZE);
         currentText.setLocalTranslation(WIDTH / 4, 3 * HEIGHT / 4, 0);
         GUI_NODE.attachChild(currentText);
@@ -165,6 +169,8 @@ public class MenuAppState extends BaseAppState implements ActionListener
                     if(currentLoc + 1 < INTRODUCTION.length)
                     {
                         currentLoc++;
+                        GUI_NODE.detachChild(mainScreen);
+                        GUI_NODE.attachChild(background);
                         displayText(INTRODUCTION[currentLoc]);
                     }
                     else
@@ -178,6 +184,11 @@ public class MenuAppState extends BaseAppState implements ActionListener
                     if(currentLoc > 0)
                     {
                         currentLoc--;
+                        if(currentLoc == 0)
+                        {
+                            GUI_NODE.attachChild(mainScreen);
+                            GUI_NODE.detachChild(background);
+                        }
                         displayText(INTRODUCTION[currentLoc]);
                     }
                 }

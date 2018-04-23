@@ -118,6 +118,7 @@ public class Adventurer
         if(canThrowSpear && spearNum > 0)
         {
             SPEARS.add(new Spear(ROOT_NODE, camera.getLocation(), camera.getDirection()));
+            Main.getMain().playAudio(AudioType.SPEAR);
             spearTimer = 0;
             canThrowSpear = false;
             spearNum--;

@@ -127,7 +127,11 @@ public class Platformer
         {
             case Player.W:
             {
-                OPEN_CHARACTER_CONTROL.jump();
+                if(isPressed)
+                {
+                    OPEN_CHARACTER_CONTROL.jump();
+                    Main.getMain().playAudio(AudioType.JUMP);
+                }
             }
             break;
             case Player.A:
@@ -157,6 +161,11 @@ public class Platformer
     {
         if(canChangeHealth)
         {
+            if(value < 0)
+            {
+                Main.getMain().playAudio(AudioType.HURT);
+            }
+                    
             PLAYER.modHealth(value);
             canChangeHealth = false;
             healthTimer = 0;

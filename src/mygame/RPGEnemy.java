@@ -111,6 +111,7 @@ public class RPGEnemy
         {
             Adventurer a = Main.getMain().getPlayer().getAdventurer();
             fireball = new Fireball(ROOT_NODE, getLocation(), a.getLocation());
+            Main.getMain().playAudio(AudioType.FIREBALL);
             a.modHealth(-Fireball.getDamage());
             canAttack = false;
             attackTimer = 0;

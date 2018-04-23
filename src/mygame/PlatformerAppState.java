@@ -322,6 +322,7 @@ public class PlatformerAppState extends BaseAppState
             if(PLATFORMER.getLocation().distance(finishBlock.getLocation()) < 5)
             {
                 PLAYER.modHealth(1000);
+                Main.getMain().playAudio(AudioType.NEXT_LEVEL);
                 Main.getMain().resetPlatformerAppState();
             }
         }

@@ -61,6 +61,10 @@ public class Player implements ActionListener
     
     public void addPowerUp(PowerUp p)
     {
+        if(p != null && p != PowerUp.NONE)
+        {
+            Main.getMain().playAudio(AudioType.POWERUP);
+        }
         switch(p)
         {
             case ADD_SPEARS:
